@@ -1,14 +1,63 @@
 ---
 title: Switch
-description: A switch with AppKit track metrics.
+description: A toggle switch with smooth animation.
 ---
 
-A switch with AppKit track metrics.
-
 <ComponentPreview component="switch" />
+
+## Definition
+
+A macOS toggle switch (`NSSwitch`) with smooth animation. The caption sits to the left of the toggle, as in System Settings. Respects `prefers-reduced-motion`.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacSwitch::new("wifi").checked(true).on_change(|next, _, _, cx| cx.notify())
+use maccn::MacSwitch;
+
+MacSwitch::new("wifi")
+    .checked(true)
+    .on_change(|next, _, _, cx| {
+        println!("Switched to: {}", next);
+    })
 ```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSwitch::new("xl").size(MacControlSize::ExtraLarge)
+MacSwitch::new("l").size(MacControlSize::Large)
+MacSwitch::new("r") // Regular (default)
+MacSwitch::new("s").size(MacControlSize::Small)
+MacSwitch::new("m").size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacSwitch::new("sw").disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `checked` | `bool` | `false` |
+| `disabled` | `bool` | `false` |
+
+### Events
+
+| Event | Payload |
+| --- | --- |
+| `on_change` | `(bool, &ClickEvent, &mut Window, &mut App)` |

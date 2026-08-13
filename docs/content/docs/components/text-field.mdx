@@ -1,14 +1,83 @@
 ---
 title: Text Field
-description: A single-line text input.
+description: A text input with placeholder, prefix, and suffix support.
 ---
 
-A single-line text input.
-
 <ComponentPreview component="text-field" />
+
+## Definition
+
+A text input field with support for placeholders, leading/trailing elements, and a pill variant. Wraps `InputState` from `gpui-base`.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacTextField::new("name", &input_state)
+use maccn::MacTextField;
+use gpui_base::input::InputState;
+
+let state = cx.new(|cx| {
+    InputState::new(window, cx)
+        .placeholder("Placeholder text")
+        .default_value("")
+});
+
+MacTextField::new("input", &state)
+```
+
+### Pill Style
+
+```rust
+MacTextField::new("input", &state).pill()
+```
+
+### With Prefix and Suffix
+
+```rust
+MacTextField::new("input", &state)
+    .prefix(icon_element)
+    .suffix(button_element)
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacTextField::new("input-xl", &state)
+    .size(MacControlSize::ExtraLarge)
+```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `disabled` | `bool` | `false` |
+
+### Methods
+
+| Method | Description |
+| --- | --- |
+| `pill()` | Renders as a rounded pill shape. |
+| `prefix(element)` | Adds a leading element. |
+| `suffix(element)` | Adds a trailing element. |
+| `radius(f32)` | Overrides the corner radius. |
+
+### State
+
+The text field requires an `Entity<InputState>` created via:
+
+```rust
+InputState::new(window, cx)
+    .placeholder("Placeholder")
+    .default_value("")
 ```

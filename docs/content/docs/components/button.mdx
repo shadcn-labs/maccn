@@ -3,12 +3,101 @@ title: Button
 description: A bordered, prominent, or destructive push button.
 ---
 
-A bordered, prominent, or destructive push button.
-
 <ComponentPreview component="button" />
+
+## Definition
+
+A macOS push button (`NSButton`). Supports default, prominent, and destructive variants in the five standard control sizes.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacButton::new("save").variant(ButtonVariant::Prominent).child("Save")
+use maccn::{MacButton, ButtonVariant, MacControlSize};
+
+// Default bordered button
+MacButton::new("save").child("Save")
+
+// Prominent (accent-filled) button
+MacButton::new("save")
+    .variant(ButtonVariant::Prominent)
+    .child("Save")
+
+// Destructive button
+MacButton::new("delete")
+    .variant(ButtonVariant::Destructive)
+    .child("Delete")
 ```
+
+### Variants
+
+Three visual styles: `Bordered` (default), `Prominent` (accent-filled), and `Destructive` (red).
+
+```rust
+MacButton::new("btn-bordered").child("Bordered")
+MacButton::new("btn-prominent")
+    .variant(ButtonVariant::Prominent)
+    .child("Prominent")
+MacButton::new("btn-destructive")
+    .variant(ButtonVariant::Destructive)
+    .child("Delete")
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacButton::new("btn-xl")
+    .size(MacControlSize::ExtraLarge)
+    .variant(ButtonVariant::Prominent)
+    .child("Extra Large")
+MacButton::new("btn-l").size(MacControlSize::Large).child("Large")
+MacButton::new("btn-r").child("Regular")
+MacButton::new("btn-s").size(MacControlSize::Small).child("Small")
+MacButton::new("btn-m").size(MacControlSize::Mini).child("Mini")
+```
+
+### Disabled
+
+```rust
+MacButton::new("btn-d1").disabled(true).child("Bordered")
+MacButton::new("btn-d2")
+    .variant(ButtonVariant::Prominent)
+    .disabled(true)
+    .child("Prominent")
+MacButton::new("btn-d3")
+    .variant(ButtonVariant::Destructive)
+    .disabled(true)
+    .child("Delete")
+```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `variant` | `ButtonVariant` | `Bordered` |
+| `size` | `MacControlSize` | `Regular` |
+| `disabled` | `bool` | `false` |
+
+### Variants
+
+| Variant | Description |
+| --- | --- |
+| `Bordered` | Neutral bordered button (default). |
+| `Prominent` | Accent-filled button. |
+| `Destructive` | Red bordered destructive button. |
+
+### Events
+
+| Event | Payload |
+| --- | --- |
+| `on_click` | `(&ClickEvent, &mut Window, &mut App)` |

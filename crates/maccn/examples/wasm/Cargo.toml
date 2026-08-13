@@ -17,7 +17,9 @@ wasm-bindgen.workspace = true
 [target.'cfg(target_family = "wasm")'.dependencies]
 console_error_panic_hook = "0.1"
 console_log = "1.0"
+log = "0.4"
 tracing-wasm = "0.2"
+web-sys = { version = "0.3", features = ["Window", "MediaQueryList"] }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 maccn.workspace = true

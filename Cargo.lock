@@ -3183,9 +3183,11 @@ dependencies = [
  "gpui",
  "gpui-base",
  "gpui_platform",
+ "log",
  "maccn",
  "tracing-wasm",
  "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

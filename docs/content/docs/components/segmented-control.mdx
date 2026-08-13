@@ -1,14 +1,67 @@
 ---
 title: Segmented Control
-description: A set of mutually exclusive segments.
+description: A segmented control for switching between views.
 ---
 
-A set of mutually exclusive segments.
-
 <ComponentPreview component="segmented-control" />
+
+## Definition
+
+A macOS segmented control for switching between a small set of mutually exclusive options. The selected segment is highlighted with the accent color.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacSegmentedControl::new("view").child(MacSegment::new("day").selected(true).child("Day"))
+use maccn::{MacSegmentedControl, MacSegment};
+
+MacSegmentedControl::new("segments")
+    .child(
+        MacSegment::new("seg-1")
+            .selected(true)
+            .on_click(|_, _, cx| { /* selected */ })
+            .child("One"),
+    )
+    .child(MacSegment::new("seg-2").child("Two"))
+    .child(MacSegment::new("seg-3").child("Three"))
 ```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSegmentedControl::new("segments")
+    .size(MacControlSize::Large)
+    .child(MacSegment::new("a").selected(true).child("A"))
+    .child(MacSegment::new("b").child("B"))
+```
+
+## API
+
+### MacSegmentedControl Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `disabled` | `bool` | `false` |
+
+### MacSegment Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `selected` | `bool` | `false` |
+| `size` | `MacControlSize` | `Regular` |
+| `disabled` | `bool` | `false` |
+
+### Events
+
+| Event | Payload |
+| --- | --- |
+| `on_click` | `(&ClickEvent, &mut Window, &mut App)` |

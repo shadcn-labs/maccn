@@ -7,16 +7,16 @@
 use gpui::{
     App, AppContext as _, Application, Context, Entity, InteractiveElement as _, IntoElement,
     ParentElement as _, Render, ScrollHandle, StatefulInteractiveElement as _, Styled as _, Window,
-    WindowOptions, actions, div, prelude::FluentBuilder as _, px, size,
+    WindowOptions, actions, div, prelude::FluentBuilder as _, px,
 };
+#[cfg(not(target_family = "wasm"))]
+use gpui::size;
 #[cfg(not(target_family = "wasm"))]
 use gpui::{KeyBinding, WindowBounds};
 use gpui_base::input::{InputEvent, InputState};
 use gpui_base::slider::SliderState;
 
-use maccn::{
-    MacButton, MacControlSize, MaccnAppearance, MaccnTheme, ThemeExt as _,
-};
+use maccn::{MacButton, MacControlSize, ThemeExt as _};
 
 mod components;
 
@@ -47,7 +47,6 @@ pub const COMPONENTS: &[&str] = &[
 pub struct Showcase {
     component: String,
     navigation_enabled: bool,
-    appearance: MaccnAppearance,
     checkbox_checked: bool,
     radio_selected: usize,
     switch_checked: bool,
@@ -64,9 +63,56 @@ pub struct Showcase {
     scroll: ScrollHandle,
 }
 
+#[cfg(target_family = "wasm")]
+fn detect_system_theme(cx: &mut gpui::App) {
+    use maccn::{MaccnAppearance, MaccnTheme};
+
+    let is_dark = web_sys::window()
+        .and_then(|w| w.match_media(prefers_color_scheme_dark_media_query()).ok())
+        .flatten()
+        .map(|list| list.matches())
+        .unwrap_or(false);
+
+    let appearance = if is_dark {
+        MaccnAppearance::Dark
+    } else {
+        MaccnAppearance::Light
+    };
+    cx.set_global(match appearance {
+        MaccnAppearance::Light => MaccnTheme::light(),
+        MaccnAppearance::Dark => MaccnTheme::dark(),
+    });
+}
+
+#[cfg(target_family = "wasm")]
+fn prefers_color_scheme_dark_media_query() -> &'static str {
+    "(prefers-color-scheme: dark)"
+}
+
 impl Showcase {
     pub fn new(component: impl Into<String>, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let component = component.into();
+
+        // Auto-detect system theme on WASM
+        #[cfg(target_family = "wasm")]
+        {
+            use maccn::{MaccnAppearance, MaccnTheme};
+            let is_dark = web_sys::window()
+                .and_then(|w| w.match_media("(prefers-color-scheme: dark)").ok())
+                .flatten()
+                .map(|list| list.matches())
+                .unwrap_or(false);
+            let appearance = if is_dark {
+                MaccnAppearance::Dark
+            } else {
+                MaccnAppearance::Light
+            };
+            cx.set_global(match appearance {
+                MaccnAppearance::Light => MaccnTheme::light(),
+                MaccnAppearance::Dark => MaccnTheme::dark(),
+            });
+        }
+
         let input = cx.new(|cx| {
             InputState::new(window, cx)
                 .placeholder("Placeholder text")
@@ -91,12 +137,9 @@ impl Showcase {
         let slider = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(64.));
         cx.observe(&slider, |_, _, cx| cx.notify()).detach();
 
-        let appearance = MaccnTheme::global(cx).appearance;
-
         Self {
             navigation_enabled: component == "overview",
             component,
-            appearance,
             checkbox_checked: true,
             radio_selected: 0,
             switch_checked: true,
@@ -112,18 +155,6 @@ impl Showcase {
             search_input,
             scroll: ScrollHandle::new(),
         }
-    }
-
-    fn set_appearance(&mut self, appearance: MaccnAppearance, cx: &mut Context<Self>) {
-        if self.appearance == appearance {
-            return;
-        }
-        self.appearance = appearance;
-        cx.set_global(match appearance {
-            MaccnAppearance::Light => MaccnTheme::light(),
-            MaccnAppearance::Dark => MaccnTheme::dark(),
-        });
-        cx.notify();
     }
 
     fn overview(&self, cx: &mut Context<Self>) -> impl IntoElement {
@@ -211,8 +242,7 @@ impl Render for Showcase {
             _ => self.overview(cx).into_any_element(),
         };
 
-        let show_back = self.navigation_enabled && self.component != "overview";
-        let entity = cx.entity().downgrade();
+        let is_overview = self.component == "overview";
 
         div()
             .size_full()
@@ -222,76 +252,31 @@ impl Render for Showcase {
             .text_color(theme.label)
             .text_xs()
             .font_family("Inter")
-            .child(
-                div()
-                    .h_10()
-                    .flex_none()
-                    .px_3()
-                    .flex()
-                    .items_center()
-                    .justify_between()
-                    .border_b_1()
-                    .border_color(theme.separator)
-                    .child(
-                        div()
-                            .flex()
-                            .items_center()
-                            .gap_2()
-                            .when(show_back, |this| {
-                                this.child(
-                                    MacButton::new("back-to-overview")
-                                        .size(MacControlSize::Small)
-                                        .child("All components")
-                                        .on_click({
-                                            let entity = entity.clone();
-                                            move |_, _, cx| {
-                                                _ = entity.update(cx, |this, cx| {
-                                                    this.component = "overview".to_owned();
-                                                    cx.notify();
-                                                });
-                                            }
-                                        }),
-                                )
-                            })
-                            .child(
-                                div()
-                                    .font_weight(gpui::FontWeight::SEMIBOLD)
-                                    .child("maccn"),
-                            ),
-                    )
-                    .child(
-                        div()
-                            .flex()
-                            .items_center()
-                            .gap_2()
-                            .child(
-                                MacButton::new("appearance-light")
-                                    .size(MacControlSize::Small)
-                                    .child("Light")
-                                    .on_click({
-                                        let entity = entity.clone();
-                                        move |_, _, cx| {
-                                            _ = entity.update(cx, |this, cx| {
-                                                this.set_appearance(MaccnAppearance::Light, cx);
-                                            });
-                                        }
-                                    }),
-                            )
-                            .child(
-                                MacButton::new("appearance-dark")
-                                    .size(MacControlSize::Small)
-                                    .child("Dark")
-                                    .on_click({
-                                        let entity = entity.clone();
-                                        move |_, _, cx| {
-                                            _ = entity.update(cx, |this, cx| {
-                                                this.set_appearance(MaccnAppearance::Dark, cx);
-                                            });
-                                        }
-                                    }),
-                            ),
-                    ),
-            )
+            // Header bar — only shown in overview mode (native)
+            .when(is_overview, |this| {
+                this.child(
+                    div()
+                        .h_10()
+                        .flex_none()
+                        .px_3()
+                        .flex()
+                        .items_center()
+                        .justify_between()
+                        .border_b_1()
+                        .border_color(theme.separator)
+                        .child(
+                            div()
+                                .flex()
+                                .items_center()
+                                .gap_2()
+                                .child(
+                                    div()
+                                        .font_weight(gpui::FontWeight::SEMIBOLD)
+                                        .child("maccn"),
+                                ),
+                        ),
+                )
+            })
             .child(
                 div()
                     .id("showcase-scroll")
@@ -355,6 +340,8 @@ pub fn run_embedded(app: Application, component: impl Into<String>) -> gpui::App
     let component = component.into();
     app.run_embedded(move |cx: &mut App| {
         maccn::init(cx);
+        // Auto-detect system theme before opening the window
+        detect_system_theme(cx);
         cx.text_system()
             .add_fonts(vec![std::borrow::Cow::Borrowed(
                 include_bytes!("./fonts/Inter-Regular.ttf").as_slice(),

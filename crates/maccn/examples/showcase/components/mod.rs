@@ -28,11 +28,10 @@ impl Showcase {
     pub(super) fn badge(&self) -> impl IntoElement {
         div()
             .flex()
-            .flex_col()
-            .items_start()
-            .gap_2()
-            .child(section("Badge"))
-            .child(div().flex().items_center().gap_2().child(MacBadge::new("badge-1").child("New")).child(MacBadge::new("badge-2").child("Beta")))
+            .items_center()
+            .gap_3()
+            .child(MacLabel::new("badge-label").child("Inbox"))
+            .child(MacBadge::new("badge-count").child("128"))
     }
 
     pub(super) fn box_example(&self) -> impl IntoElement {

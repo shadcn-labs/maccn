@@ -1,7 +1,7 @@
 async function init() {
   const loading = document.getElementById('loading');
   try {
-    const wasm = await import('./wasm/maccn_wasm.js');
+    const wasm = await import('/examples/wasm/maccn_wasm.js');
     await wasm.default();
     const component = new URLSearchParams(window.location.search).get('component');
     await wasm.run(component || undefined);

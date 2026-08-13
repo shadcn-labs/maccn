@@ -1,14 +1,68 @@
 ---
 title: Label
-description: A text label carrying the NSFont text styles.
+description: A text label with macOS typography styles.
 ---
 
-A text label carrying the NSFont text styles.
-
 <ComponentPreview component="label" />
+
+## Definition
+
+A text label with 11 macOS typography styles, from `LargeTitle` to `Caption2`. The `secondary` flag switches to the secondary label color.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacLabel::new("title").style(LabelStyle::Title1).child("Title")
+use maccn::{MacLabel, LabelStyle};
+
+// Default body label
+MacLabel::new("name").child("Hello, world!")
+
+// Secondary color
+MacLabel::new("name")
+    .secondary(true)
+    .child("Subtitle")
+
+// Specific style
+MacLabel::new("title")
+    .style(LabelStyle::Headline)
+    .child("Headline")
 ```
+
+### Styles
+
+| Style | Font Size | Weight |
+| --- | --- | --- |
+| `Body` | 13px | Normal |
+| `LargeTitle` | 26px | Normal |
+| `Title1` | 22px | Normal |
+| `Title2` | 17px | Normal |
+| `Title3` | 15px | Normal |
+| `Headline` | 13px | Bold |
+| `Callout` | 12px | Normal |
+| `Subheadline` | 11px | Normal |
+| `Footnote` | 10px | Normal |
+| `Caption1` | 10px | Normal |
+| `Caption2` | 10px | Normal |
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `style` | `LabelStyle` | `Body` |
+| `secondary` | `bool` | `false` |
+
+### Traits
+
+| Trait | Description |
+| --- | --- |
+| `Styled` | Set font size, color, etc. |
+| `ParentElement` | Add content via `.child()`. |

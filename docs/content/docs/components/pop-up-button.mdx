@@ -1,14 +1,74 @@
 ---
 title: Pop-Up Button
-description: A button that opens a menu of selectable items.
+description: A dropdown button that opens a popover menu.
 ---
 
-A button that opens a menu of selectable items.
-
 <ComponentPreview component="pop-up-button" />
+
+## Definition
+
+A dropdown button that opens a popover menu anchored to its bottom-left corner, matching macOS `NSPopUpButton`. Menu items close the popover after selection.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacPopUpButton::new("lang").selected(Some(0)).items(vec![MacPopUpButtonItem::new("English")])
+use maccn::{MacPopUpButton, MacPopUpButtonItem};
+
+MacPopUpButton::new("popup")
+    .selected(Some(0))
+    .items(vec![
+        MacPopUpButtonItem::new("Option 1"),
+        MacPopUpButtonItem::new("Option 2"),
+        MacPopUpButtonItem::separator(),
+        MacPopUpButtonItem::new("Option 3"),
+    ])
 ```
+
+### Items
+
+```rust
+// Regular item
+MacPopUpButtonItem::new("Label")
+    .on_select(|_, _| { /* selected */ })
+
+// Disabled item
+MacPopUpButtonItem::new("Unavailable").disabled(true)
+
+// Separator
+MacPopUpButtonItem::separator()
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacPopUpButton::new("popup-xl")
+    .size(MacControlSize::ExtraLarge)
+    .items(vec![MacPopUpButtonItem::new("Option")])
+```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `selected` | `Option<usize>` | `None` |
+| `placeholder` | `impl Into<SharedString>` | `"Select"` |
+| `disabled` | `bool` | `false` |
+
+### Item Types
+
+| Type | Description |
+| --- | --- |
+| `Item` | A selectable menu option. |
+| `Separator` | A visual divider between items. |

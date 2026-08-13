@@ -1,14 +1,71 @@
 ---
 title: Radio Group
-description: A group of radio buttons.
+description: A group of mutually exclusive radio buttons.
 ---
 
-A group of radio buttons.
-
 <ComponentPreview component="radio-group" />
+
+## Definition
+
+A group of radio buttons for selecting one option from a set, with horizontal or vertical layout. Each radio button has a filled dot when selected.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacRadioGroup::new("net").child(MacRadio::new("wifi").checked(true).child("Wi-Fi"))
+use maccn::{MacRadioGroup, MacRadio};
+use gpui::Axis;
+
+// Vertical (default)
+MacRadioGroup::new("group")
+    .child(MacRadio::new("a").checked(true).child("Option A"))
+    .child(MacRadio::new("b").child("Option B"))
+    .child(MacRadio::new("c").child("Option C"))
+
+// Horizontal
+MacRadioGroup::new("group")
+    .axis(Axis::Horizontal)
+    .child(MacRadio::new("a").child("A"))
+    .child(MacRadio::new("b").child("B"))
 ```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacRadioGroup::new("group")
+    .size(MacControlSize::Large)
+    .child(MacRadio::new("a").checked(true).child("A"))
+    .child(MacRadio::new("b").child("B"))
+```
+
+## API
+
+### MacRadioGroup Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `axis` | `Axis` | `Vertical` |
+| `gap` | `f32` | `8.0` |
+
+### MacRadio Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `checked` | `bool` | `false` |
+| `disabled` | `bool` | `false` |
+
+### Events
+
+| Event | Payload |
+| --- | --- |
+| `on_change` | `(bool, &ClickEvent, &mut Window, &mut App)` |

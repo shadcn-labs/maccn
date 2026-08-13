@@ -21,10 +21,10 @@ pub fn run(component: Option<String>) -> Result<(), JsValue> {
     let _ = console_log::init_with_level(log::Level::Info);
     tracing_wasm::set_as_global_default();
     gpui_platform::web_init();
-    let handle = showcase::run_embedded(
-        web_application(),
-        component.unwrap_or_else(|| "overview".to_owned()),
-    );
+
+    let component = component.unwrap_or_else(|| "overview".to_owned());
+
+    let handle = showcase::run_embedded(web_application(), component);
     APPLICATION.with(|application| *application.borrow_mut() = Some(handle));
     Ok(())
 }

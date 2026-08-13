@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/launch-shadcn-registry/SKILL.md",
       "computedHash": "17a0c8751bac286ce315bcfdec7c9a6b500883d048e40bc61ae75844491f7783"
+    },
+    "native-sdk": {
+      "source": "vercel-labs/native",
+      "sourceType": "github",
+      "skillPath": "skills/native-sdk/SKILL.md",
+      "computedHash": "f257d4e87a722d44898179f8324b3651466ce5d79c188c3a07d0148a822db644"
     }
   }
 }

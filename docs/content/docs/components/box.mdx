@@ -1,14 +1,51 @@
 ---
 title: Box
-description: A grouped content box with an optional footnote caption.
+description: A grouped settings container.
 ---
 
-A grouped content box with an optional footnote caption.
-
 <ComponentPreview component="box" />
+
+## Definition
+
+A grouped settings container (`NSBox`), matching the rounded-rectangle boxes found in macOS System Settings. Provides a padded area with a subtle background for grouping related controls.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacBox::new("box").child(div().child("Content"))
+use maccn::{MacBox, MacSwitch, MacSeparator};
+
+MacBox::new("box")
+    .child(
+        div().flex().items_center().justify_between()
+            .child("Automatically keep files up to date")
+            .child(MacSwitch::new("switch").checked(true)),
+    )
+    .child(MacSeparator::new("sep"))
+    .child(
+        div().flex().items_center().justify_between()
+            .child("Show preview icons")
+            .child(MacSwitch::new("switch-2").checked(true)),
+    )
 ```
+
+## API
+
+### Constructor
+
+| Method | Description |
+| --- | --- |
+| `MacBox::new(id)` | Creates a new box container. |
+
+### Traits
+
+| Trait | Description |
+| --- | --- |
+| `Styled` | Set width, height, background, etc. |
+| `ParentElement` | Add child elements via `.child()`. |

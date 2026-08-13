@@ -8,9 +8,6 @@ const { ROUTES } = await jiti.import("./constants/routes");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: false,
-  experimental: {
-    viewTransition: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -23,7 +20,14 @@ const nextConfig = {
       },
     ],
   },
-  outputFileTracingIncludes: {},
+  async rewrites() {
+    return [
+      {
+        source: "/examples",
+        destination: "/examples/index.html",
+      },
+    ];
+  },
   redirects() {
     return [
       {

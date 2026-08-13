@@ -1,14 +1,38 @@
 ---
 title: Separator
-description: A one-pixel horizontal or vertical separator.
+description: A horizontal or vertical dividing line.
 ---
 
-A one-pixel horizontal or vertical separator.
-
 <ComponentPreview component="separator" />
+
+## Definition
+
+A 1px dividing line in the theme's separator color, supporting horizontal and vertical orientations.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacSeparator::new("sep").w_full()
+use maccn::MacSeparator;
+use gpui::Axis;
+
+// Horizontal (default)
+MacSeparator::new("sep")
+
+// Vertical
+MacSeparator::new("sep").axis(Axis::Vertical)
 ```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `axis` | `Axis` | `Horizontal` |

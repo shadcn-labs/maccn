@@ -1,14 +1,60 @@
 ---
 title: Secure Field
-description: A masked text field.
+description: A masked password input field.
 ---
 
-A masked text field.
-
 <ComponentPreview component="secure-field" />
+
+## Definition
+
+A masked text input for passwords and sensitive data, with the native macOS dot masking. The `InputState` should be created with `.masked(true)`.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
-MacSecureField::new("password", &secure_input)
+use maccn::MacSecureField;
+use gpui_base::input::InputState;
+
+let state = cx.new(|cx| {
+    InputState::new(window, cx)
+        .placeholder("Password")
+        .masked(true)
+});
+
+MacSecureField::new("password", &state)
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSecureField::new("password-xl", &state)
+    .size(MacControlSize::ExtraLarge)
+```
+
+## API
+
+### Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `size` | `MacControlSize` | `Regular` |
+| `disabled` | `bool` | `false` |
+
+### State
+
+The secure field requires an `Entity<InputState>` created with `.masked(true)`:
+
+```rust
+InputState::new(window, cx)
+    .placeholder("Password")
+    .masked(true)
 ```

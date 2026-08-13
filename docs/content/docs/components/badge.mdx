@@ -1,14 +1,40 @@
 ---
 title: Badge
-description: A small rounded label used to annotate controls.
+description: A macOS sidebar count badge.
 ---
 
-A small rounded label used to annotate controls.
-
 <ComponentPreview component="badge" />
+
+## Definition
+
+A macOS sidebar count badge (`NSTableView` badge): a translucent neutral capsule with secondary text. One size only — AppKit badges carry no `ControlSize`. The kits ship no badge masters, so the metrics are modeled on the live macOS sidebar.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
 
 ## Usage
 
 ```rust
+use maccn::MacBadge;
+
 MacBadge::new("badge").child("New")
 ```
+
+## API
+
+### Constructor
+
+| Method | Description |
+| --- | --- |
+| `MacBadge::new(id)` | Creates a new badge with the given element ID. |
+
+### Traits
+
+| Trait | Description |
+| --- | --- |
+| `Styled` | Set background, text color, padding, etc. |
+| `ParentElement` | Add content via `.child()`. |
