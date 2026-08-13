@@ -1,0 +1,42 @@
+[workspace]
+resolver = "2"
+default-members = ["crates/maccn"]
+members = ["crates/maccn", "crates/maccn/examples/wasm"]
+
+[workspace.package]
+publish = false
+edition = "2024"
+
+[workspace.dependencies]
+maccn = { path = "crates/maccn" }
+
+gpui = { version = "0.2.2", git = "https://github.com/zed-industries/zed" }
+gpui_platform = { git = "https://github.com/zed-industries/zed", features = [
+  "font-kit",
+  "x11",
+  "wayland",
+  "runtime_shaders",
+] }
+gpui_macros = { version = "0.1.0", git = "https://github.com/zed-industries/zed" }
+gpui-base = { git = "https://github.com/longbridge/gpui-component" }
+
+anyhow = "1"
+smallvec = "1"
+tracing = "0.1.41"
+wasm-bindgen = "=0.2.121"
+
+[profile.dev]
+codegen-units = 16
+debug = "limited"
+split-debuginfo = "unpacked"
+
+[profile.dev.package]
+gpui = { opt-level = 3 }
+gpui_platform = { opt-level = 3 }
+gpui_macros = { opt-level = 3 }
+gpui-base = { opt-level = 3 }
+
+# Patches for WASM compatibility
+[patch.crates-io]
+# Use stacker's psm version which may have better WASM support
+psm = { git = "https://github.com/rust-lang/stacker", branch = "master" }

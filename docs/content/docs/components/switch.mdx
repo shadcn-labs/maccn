@@ -1,0 +1,14 @@
+---
+title: Switch
+description: A switch with AppKit track metrics.
+---
+
+A switch with AppKit track metrics.
+
+<ComponentPreview component="switch" />
+
+## Usage
+
+```rust
+MacSwitch::new("wifi").checked(true).on_change(|next, _, _, cx| cx.notify())
+```

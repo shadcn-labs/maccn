@@ -1,0 +1,24 @@
+[package]
+name = "maccn"
+description = "macOS-inspired controls, built for GPUI on top of gpui-base."
+keywords = ["macos", "gpui", "appkit", "ui", "components"]
+license = "Apache-2.0"
+repository = "https://github.com/hellsing/maccn"
+version = "0.1.0"
+publish = false
+edition.workspace = true
+
+[lib]
+doctest = false
+
+[dependencies]
+anyhow.workspace = true
+gpui.workspace = true
+gpui-base.workspace = true
+gpui_macros.workspace = true
+smallvec.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+gpui.workspace = true
+gpui_platform.workspace = true

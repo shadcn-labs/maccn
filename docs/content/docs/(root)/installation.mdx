@@ -1,0 +1,84 @@
+---
+title: Installation
+description: Add maccn to your GPUI project.
+---
+
+## Workspace layout
+
+The repository is a monorepo:
+
+```text
+crates/maccn/    # the component library (built on gpui-base)
+crates/maccn/examples/showcase.rs   # native demo
+crates/maccn/examples/wasm/         # WebAssembly demo
+docs/            # this Next.js documentation site
+```
+
+## Adding maccn to a project
+
+Add `maccn` to your `Cargo.toml` and initialize it in your app:
+
+```toml
+[dependencies]
+maccn = { git = "https://github.com/shadcn-labs/maccn" }
+gpui = { version = "0.2.2", git = "https://github.com/zed-industries/zed" }
+gpui-base = { git = "https://github.com/longbridge/gpui-component" }
+```
+
+Call `maccn::init` when your application starts:
+
+```rust
+fn main() {
+    maccn::init(cx);
+}
+```
+
+## Native example
+
+Run the showcase as a native window:
+
+```bash
+cargo run -p maccn --example showcase
+```
+
+Pass a component slug to open a specific demo:
+
+```bash
+cargo run -p maccn --example showcase -- switch
+```
+
+## Browser demo
+
+Build the WebAssembly demo into the docs site's `public` folder:
+
+```bash
+make -C crates/maccn/examples/wasm install   # once: wasm target + wasm-bindgen + deps
+make -C crates/maccn/examples/wasm build
+```
+
+Then run the docs site and open
+[localhost:3000/examples/?component=button](https://localhost:3000/examples/?component=button):
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Usage
+
+Create a view and compose the components:
+
+```rust
+use maccn::{MacButton, MacSwitch, ButtonVariant, theme::ThemeExt as _};
+
+impl Render for SettingsView {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .flex_col()
+            .gap_4()
+            .child(MacButton::new("continue").variant(ButtonVariant::Prominent).child("Continue"))
+            .child(MacSwitch::new("wifi").checked(self.wifi))
+    }
+}
+```

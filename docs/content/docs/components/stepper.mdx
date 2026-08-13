@@ -1,0 +1,14 @@
+---
+title: Stepper
+description: A stepper with increment and decrement buttons.
+---
+
+A stepper with increment and decrement buttons.
+
+<ComponentPreview component="stepper" />
+
+## Usage
+
+```rust
+MacStepper::new("step").on_increment(|_, cx| cx.notify())
+```

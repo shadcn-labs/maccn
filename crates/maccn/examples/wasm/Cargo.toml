@@ -1,0 +1,23 @@
+[package]
+name = "maccn-wasm"
+version = "0.1.0"
+publish = false
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+gpui.workspace = true
+gpui-base.workspace = true
+gpui_platform.workspace = true
+maccn.workspace = true
+wasm-bindgen.workspace = true
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+console_error_panic_hook = "0.1"
+console_log = "1.0"
+tracing-wasm = "0.2"
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+maccn.workspace = true

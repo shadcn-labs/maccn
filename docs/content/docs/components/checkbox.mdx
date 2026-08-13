@@ -1,0 +1,14 @@
+---
+title: Checkbox
+description: A checkbox with checked, indeterminate, and disabled states.
+---
+
+A checkbox with checked, indeterminate, and disabled states.
+
+<ComponentPreview component="checkbox" />
+
+## Usage
+
+```rust
+MacCheckbox::new("agree").checked(true).on_change(|state, _, _, cx| cx.notify()).child("Agree")
+```

@@ -1,0 +1,33 @@
+---
+title: Introduction
+description: macOS-inspired controls, built for GPUI on top of gpui-base.
+---
+
+**maccn** is a library of macOS-inspired controls for [GPUI](https://gpui.rs), built on top of [`gpui-base`](https://github.com/longbridge/gpui-component). The components carry the AppKit metrics, states and keyboard behavior captured by [macvue](https://github.com/antonreshetov/macvue), re-expressed as composable Rust components.
+
+<Callout type="info">
+  Every control supports the five `NSControl.ControlSize` sizes, light and dark
+  appearances, and a single system accent color that re-tints the whole library.
+</Callout>
+
+## What You Get
+
+- 🍎 **19 components** - Badge, Box, Button, Checkbox, Glass Panel, Help Button, Label, Pop-Up Button, Progress, Radio Group, Search Field, Secure Field, Segmented Control, Separator, Slider, Spinner, Stepper, Switch, and Text Field
+- 📏 **Five control sizes** - `mini`, `small`, `regular`, `large`, and `extraLarge` on every control that has them
+- 🌗 **Light and dark** - driven by the active `MaccnTheme`, on any element rather than just the window
+- 🎨 **System accents** - every control follows `MaccnTheme.accent`
+- 🖥️ **Runs natively or in the browser** - the same components drive a native app or a WebAssembly demo
+
+## Tech Stack
+
+- `GPUI` + `gpui-base` (Rust)
+- `Next.js 16` + Fumadocs for this documentation site
+- `wasm-bindgen` + `vite` for the in-browser demos
+
+## How It Works
+
+1. Build your controls with the components in `crates/maccn`
+2. Compose them in a GPUI `Render` impl
+3. Run the demo with the native example, or build it to WebAssembly for the browser
+
+See [Installation](/docs/installation) to get started, or browse the [components](/docs/components).
