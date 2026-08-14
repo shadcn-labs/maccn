@@ -15,7 +15,7 @@ const bases = [
   },
 ];
 
-function detectBase(pathname: string): "gpui" | "native-sdk" | null {
+const detectBase = (pathname: string): "gpui" | "native-sdk" | null => {
   if (pathname.startsWith(ROUTES.DOCS_COMPONENTS_GPUI)) {
     return "gpui";
   }
@@ -23,13 +23,16 @@ function detectBase(pathname: string): "gpui" | "native-sdk" | null {
     return "native-sdk";
   }
   return null;
-}
+};
 
-function getComponentSlug(pathname: string, basePrefix: string): string | null {
+const getComponentSlug = (
+  pathname: string,
+  basePrefix: string
+): string | null => {
   const rest = pathname.slice(basePrefix.length);
-  const segments = rest.split("/").filter(Boolean);
-  return segments[0] ?? null;
-}
+  const segment = rest.split("/").find(Boolean);
+  return segment ?? null;
+};
 
 export const DocsBaseSwitcher = ({ className }: { className?: string }) => {
   const pathname = usePathname();
@@ -39,10 +42,12 @@ export const DocsBaseSwitcher = ({ className }: { className?: string }) => {
     return null;
   }
 
-  const componentSlug = getComponentSlug(
-    pathname,
-    bases.find((b) => b.name === activeBase)!.prefix
-  );
+  const activePrefix = bases.find((b) => b.name === activeBase)?.prefix;
+  if (!activePrefix) {
+    return null;
+  }
+
+  const componentSlug = getComponentSlug(pathname, activePrefix);
 
   return (
     <div

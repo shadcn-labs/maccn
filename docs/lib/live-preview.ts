@@ -4,10 +4,11 @@
  * Architecture: a single shared WASM instance with multiple LivePreview
  * handles (one per preview tile). The page owns the clock and pixel buffer.
  */
+/* eslint-disable max-classes-per-file */
 
 const WASM_PATH = "/native-sdk/preview.wasm";
 
-let engineReady: Promise<PreviewEngine> | undefined;
+let engineReady: Promise<PreviewEngineType> | undefined;
 
 interface WasmExports {
   memory: WebAssembly.Memory;
@@ -37,13 +38,25 @@ interface WasmExports {
 const cursorMap = ["default", "pointer", "text", "col-resize"] as const;
 
 export class LivePreview {
+  engine: PreviewEngineType;
+  readonly id: number;
+  readonly logicalWidth: number;
+  readonly logicalHeight: number;
+  private pixelByteLen: number;
+
   constructor(
-    private engine: PreviewEngine,
-    public readonly id: number,
-    public readonly logicalWidth: number,
-    public readonly logicalHeight: number,
-    private pixelByteLen: number
-  ) {}
+    engine: PreviewEngineType,
+    id: number,
+    logicalWidth: number,
+    logicalHeight: number,
+    pixelByteLen: number
+  ) {
+    this.engine = engine;
+    this.id = id;
+    this.logicalWidth = logicalWidth;
+    this.logicalHeight = logicalHeight;
+    this.pixelByteLen = pixelByteLen;
+  }
 
   render(scale: number): ImageData | null {
     const status = this.engine.exports.preview_status(this.id);
@@ -121,16 +134,20 @@ export class LivePreview {
   }
 }
 
-export class PreviewEngine {
-  constructor(public exports: WasmExports) {}
+class PreviewEngineType {
+  exports: WasmExports;
 
-  static async load(): Promise<PreviewEngine> {
+  constructor(exports: WasmExports) {
+    this.exports = exports;
+  }
+
+  static async load(): Promise<PreviewEngineType> {
     const { instance } = await WebAssembly.instantiateStreaming(
       fetch(WASM_PATH)
     );
 
     const exports = instance.exports as unknown as WasmExports;
-    return new PreviewEngine(exports);
+    return new PreviewEngineType(exports);
   }
 
   create(name: string, dark: boolean): LivePreview | null {
@@ -170,12 +187,15 @@ export class PreviewEngine {
   }
 }
 
-export async function loadPreviewEngine(): Promise<PreviewEngine | null> {
-  try {
-    engineReady ??= PreviewEngine.load();
-    return await engineReady;
-  } catch {
-    engineReady = undefined;
-    return null;
-  }
-}
+export type { PreviewEngineType as PreviewEngine };
+
+export const loadPreviewEngine =
+  async (): Promise<PreviewEngineType | null> => {
+    try {
+      engineReady ??= PreviewEngineType.load();
+      return await engineReady;
+    } catch {
+      engineReady = undefined;
+      return null;
+    }
+  };

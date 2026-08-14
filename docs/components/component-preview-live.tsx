@@ -16,23 +16,24 @@ const liveRegistry: {
 }[] = [];
 let nextLiveId = 1;
 
-function registerLive(visible: () => boolean, release: () => void): number {
-  const id = nextLiveId++;
+const registerLive = (visible: () => boolean, release: () => void): number => {
+  const id = nextLiveId;
+  nextLiveId += 1;
   liveRegistry.push({ id, release, visible });
   while (liveRegistry.length > max_live_instances) {
     const index = liveRegistry.findIndex((entry) => !entry.visible());
-    const evicted = liveRegistry.splice(Math.max(index, 0), 1)[0];
+    const [evicted] = liveRegistry.splice(Math.max(index, 0), 1);
     evicted?.release();
   }
   return id;
-}
+};
 
-function unregisterLive(id: number): void {
+const unregisterLive = (id: number): void => {
   const index = liveRegistry.findIndex((entry) => entry.id === id);
   if (index !== -1) {
     liveRegistry.splice(index, 1);
   }
-}
+};
 
 const handled_keys = new Set([
   "tab",
@@ -49,52 +50,51 @@ const handled_keys = new Set([
 ]);
 const handled_shortcut_keys = new Set(["a", "c", "x", "v"]);
 
-function engineKeyName(key: string): string {
-  return key === " " ? "space" : key.toLowerCase();
-}
+const engineKeyName = (key: string): string =>
+  key === "space" ? "space" : key.toLowerCase();
 
-function engineModifiers(event: {
+const engineModifiers = (event: {
   metaKey: boolean;
   ctrlKey: boolean;
   altKey: boolean;
   shiftKey: boolean;
-}): number {
+}): number => {
   let mask = 0;
   if (event.metaKey) {
-    mask |= 1 | 2;
+    mask = mask + 1 + 2;
   }
   if (event.ctrlKey) {
-    mask |= 4;
+    mask += 4;
   }
   if (event.altKey) {
-    mask |= 8;
+    mask += 8;
   }
   if (event.shiftKey) {
-    mask |= 16;
+    mask += 16;
   }
   return mask;
-}
+};
 
-function engineConsumesKey(event: {
+const engineConsumesKey = (event: {
   key: string;
   metaKey: boolean;
   ctrlKey: boolean;
   altKey: boolean;
-}): boolean {
+}): boolean => {
   const key = engineKeyName(event.key);
   if ((event.metaKey || event.ctrlKey) && !event.altKey) {
     return handled_shortcut_keys.has(key);
   }
   return handled_keys.has(key) || event.key.length === 1;
-}
+};
 
-export function ComponentPreviewLive({
+export const ComponentPreviewLive = ({
   name,
   height = 200,
 }: {
   name: string;
   height?: number;
-}) {
+}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const previewRef = useRef<LivePreview | null>(null);
@@ -195,31 +195,30 @@ export function ComponentPreviewLive({
     setPainted(false);
   }, [stopLoop]);
 
-  const activate = useCallback(() => {
+  const activate = useCallback(async () => {
     if (previewRef.current) {
       return;
     }
-    void loadPreviewEngine().then((engine) => {
-      if (!engine || previewRef.current || !containerRef.current) {
-        return;
-      }
-      if (
-        !visibleRef.current &&
-        document.activeElement !== containerRef.current
-      ) {
-        return;
-      }
+    const engine = await loadPreviewEngine();
+    if (!engine || previewRef.current || !containerRef.current) {
+      return;
+    }
+    if (
+      !visibleRef.current &&
+      document.activeElement !== containerRef.current
+    ) {
+      return;
+    }
 
-      const preview = engine.create(name, isDarkRef.current);
-      if (!preview) {
-        return;
-      }
+    const preview = engine.create(name, isDarkRef.current);
+    if (!preview) {
+      return;
+    }
 
-      previewRef.current = preview;
-      liveIdRef.current = registerLive(() => visibleRef.current, deactivate);
-      setLive(true);
-      wake();
-    });
+    previewRef.current = preview;
+    liveIdRef.current = registerLive(() => visibleRef.current, deactivate);
+    setLive(true);
+    wake();
   }, [deactivate, name, wake]);
 
   useEffect(() => {
@@ -247,7 +246,7 @@ export function ComponentPreviewLive({
             if (previewRef.current) {
               wake();
             } else {
-              activate();
+              void activate();
             }
           } else {
             stopLoop();
@@ -428,4 +427,4 @@ export function ComponentPreviewLive({
       </div>
     </div>
   );
-}
+};

@@ -34,7 +34,7 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
+  rewrites() {
     return [
       {
         destination: "/examples/index.html",

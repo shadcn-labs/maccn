@@ -35,6 +35,26 @@ export const getPagesFromFolder = (folder: PageTreeFolder): PageTreePage[] =>
     (child): child is PageTreePage => child.type === "page"
   );
 
+export const getPagesFromFolderWithoutIndex = (
+  folder: PageTreeFolder
+): PageTreePage[] =>
+  folder.children.filter(
+    (child): child is PageTreePage =>
+      child.type === "page" && child.name !== "index"
+  );
+
+export const getFoldersFromFolder = (
+  folder: PageTreeFolder
+): PageTreeFolder[] =>
+  folder.children.filter(
+    (child): child is PageTreeFolder => child.type === "folder"
+  );
+
+export const getComponentNameFromUrl = (url: string): string => {
+  const segments = url.split("/").filter(Boolean);
+  return segments.at(-1) ?? "";
+};
+
 const matchesBase = (folder: PageTreeFolder, base: string): boolean =>
   folder.$id === base ||
   String(folder.$id ?? "").endsWith(`/${base}`) ||

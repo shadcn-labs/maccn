@@ -8,19 +8,19 @@ import type { ReactNode } from "react";
 import { ROUTES } from "@/constants/routes";
 
 const ComponentPreviewLive = dynamic(
-  () =>
-    import("@/components/component-preview-live").then(
-      (mod) => mod.ComponentPreviewLive
-    ),
+  async () => {
+    const mod = await import("@/components/component-preview-live");
+    return mod.ComponentPreviewLive;
+  },
   { ssr: false }
 );
 
-function detectBase(pathname: string): "gpui" | "native-sdk" {
+const detectBase = (pathname: string): "gpui" | "native-sdk" => {
   if (pathname.startsWith(ROUTES.DOCS_COMPONENTS_NATIVE_SDK)) {
     return "native-sdk";
   }
   return "gpui";
-}
+};
 
 /**
  * Embeds the interactive WASM demo for a maccn component.
@@ -53,7 +53,7 @@ export const ComponentPreview = ({
         lastClass = html.className;
         const iframe = iframeRef.current;
         if (iframe) {
-          iframe.src = iframe.src;
+          iframe.src = `${iframe.src}`;
         }
       }
     });
