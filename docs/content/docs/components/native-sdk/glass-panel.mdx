@@ -1,0 +1,45 @@
+---
+title: Glass Panel
+description: A translucent panel with blur and vibrancy effects.
+---
+
+<ComponentPreview component="glass-panel" />
+
+## Definition
+
+A translucent panel with macOS vibrancy effects. Two material options: `regular` (70%/32% opacity for light/dark) and `clear` (28%/12% opacity).
+
+## Markup
+
+```xml
+<glass-panel material="regular" width="300" padding="16">
+  <column gap="6">
+    <text>Vibrant content</text>
+    <text foreground="text_muted">With blur effect</text>
+  </column>
+</glass-panel>
+
+<glass-panel material="clear" width="300" padding="16">
+  <text>Lighter blur</text>
+</glass-panel>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.panel(.{ .material = .regular, .width = 300, .padding = 16 }, .{
+    ui.column(.{ .gap = 6 }, .{
+        ui.text(.{}, "Vibrant content"),
+        ui.text(.{ .style_tokens = .{ .foreground = .text_muted } }, "With blur effect"),
+    }),
+})
+```
+
+## Attributes
+
+| Attribute  | Description                             |
+| ---------- | --------------------------------------- |
+| `material` | Material variant: `regular` \| `clear`. |
+| `width`    | Definite width (plain number).          |
+| `height`   | Definite height (plain number).         |
+| `padding`  | Uniform padding (plain number).         |

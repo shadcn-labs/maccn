@@ -1,0 +1,35 @@
+---
+title: Search Field
+description: A search input with magnifier icon and clear button.
+---
+
+<ComponentPreview component="search-field" />
+
+## Definition
+
+A search input field with a magnifying glass icon and clear button. Wraps `Input` in pill mode with search-specific styling.
+
+## Markup
+
+```xml
+<search-field placeholder="Search..." on-submit="search" />
+<search-field disabled="true" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.search_field, .{
+    .placeholder = "Search...",
+    .on_submit = .search,
+}, .{})
+```
+
+## Attributes
+
+| Attribute     | Description                                |
+| ------------- | ------------------------------------------ |
+| `placeholder` | Placeholder text.                          |
+| `disabled`    | Disables the control.                      |
+| `on-submit`   | Dispatch a Msg when submitted (Enter key). |
+| `on-change`   | Dispatch a Msg on every change.            |

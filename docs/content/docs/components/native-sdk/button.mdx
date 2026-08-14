@@ -1,0 +1,59 @@
+---
+title: Button
+description: A text-bearing press control with macOS styling.
+---
+
+<ComponentPreview component="button" />
+
+## Definition
+
+A text-bearing press control. The label is the element's content, `on-press` dispatches its Msg, and an inline `icon` draws before the label. Six variants cover the house palette.
+
+## Markup
+
+```xml
+<row gap="12" cross="center">
+  <button variant="primary" on-press="save">Save</button>
+  <button variant="secondary" on-press="duplicate">Duplicate</button>
+  <button variant="outline" on-press="preview">Preview</button>
+  <button variant="ghost" on-press="dismiss">Dismiss</button>
+  <button variant="destructive" on-press="delete">Delete</button>
+</row>
+```
+
+## Sizes
+
+Four sizes: `sm`, `default`, `lg`, and `icon`.
+
+```xml
+<row gap="12" cross="center">
+  <button size="sm" variant="outline" on-press="zoom_out">Small</button>
+  <button variant="outline" on-press="reset_zoom">Default</button>
+  <button size="lg" variant="outline" on-press="zoom_in">Large</button>
+  <button size="icon" icon="plus" label="New note" on-press="create_note"></button>
+</row>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.row(.{ .gap = 12, .cross = .center }, .{
+    ui.button(.{ .variant = .primary, .on_press = .save }, "Save"),
+    ui.button(.{ .variant = .secondary, .on_press = .duplicate }, "Duplicate"),
+    ui.button(.{ .variant = .outline, .on_press = .preview }, "Preview"),
+    ui.button(.{ .variant = .ghost, .on_press = .dismiss }, "Dismiss"),
+    ui.button(.{ .variant = .destructive, .on_press = .delete }, "Delete"),
+})
+```
+
+## Attributes
+
+| Attribute  | Description                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| `text`     | Text value; a literal or one `{binding}`.                                                       |
+| `variant`  | Visual variant: `default` \| `primary` \| `secondary` \| `outline` \| `ghost` \| `destructive`. |
+| `size`     | Control size: `default` \| `sm` \| `lg` \| `icon`.                                              |
+| `icon`     | Vector icon drawn inline before the label.                                                      |
+| `disabled` | Disables the control; `true`/`false` or a `{binding}`.                                          |
+| `on-press` | Dispatch a Msg on press: `tag` or `tag:{payload}`.                                              |
+| `on-hold`  | Press-and-hold Msg (~350ms hold dispatches it).                                                 |

@@ -1,0 +1,30 @@
+---
+title: Separator
+description: A horizontal or vertical dividing line.
+---
+
+<ComponentPreview component="separator" />
+
+## Definition
+
+A 1px dividing line in the theme's separator color. Supports horizontal and vertical orientations.
+
+## Markup
+
+```xml
+<separator />
+<separator orientation="vertical" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.separator, .{}, .{})
+ui.el(.separator, .{ .orientation = .vertical }, .{})
+```
+
+## Attributes
+
+| Attribute     | Description                                 |
+| ------------- | ------------------------------------------- |
+| `orientation` | Line direction: `horizontal` \| `vertical`. |

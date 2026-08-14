@@ -1,0 +1,45 @@
+---
+title: Text Field
+description: A text input with placeholder, prefix, and suffix support.
+---
+
+<ComponentPreview component="text-field" />
+
+## Definition
+
+A text input field with placeholder text, prefix/suffix elements, and configurable corner radius.
+
+## Markup
+
+```xml
+<text-field placeholder="you@example.com" on-submit="save_email" />
+<text-field pill="true" placeholder="Search..." />
+<text-field prefix="https://" suffix=".com" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.text_field, .{
+    .placeholder = "you@example.com",
+    .on_submit = .save_email,
+}, .{})
+
+ui.el(.text_field, .{
+    .pill = true,
+    .placeholder = "Search...",
+}, .{})
+```
+
+## Attributes
+
+| Attribute     | Description                                |
+| ------------- | ------------------------------------------ |
+| `placeholder` | Placeholder text.                          |
+| `pill`        | Pill-shaped styling; `true`/`false`.       |
+| `prefix`      | Prefix element content.                    |
+| `suffix`      | Suffix element content.                    |
+| `radius`      | Custom corner radius.                      |
+| `disabled`    | Disables the control.                      |
+| `on-submit`   | Dispatch a Msg when submitted (Enter key). |
+| `on-change`   | Dispatch a Msg on every change.            |

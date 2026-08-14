@@ -1,0 +1,40 @@
+---
+title: Checkbox
+description: A tri-state checkbox with check and indeterminate marks.
+---
+
+<ComponentPreview component="checkbox" />
+
+## Definition
+
+A tri-state checkbox with check and indeterminate marks. Supports `checked`, `unchecked`, and `indeterminate` states.
+
+## Markup
+
+```xml
+<column gap="12">
+  <checkbox checked="true" on-change="toggle">Agree</checkbox>
+  <checkbox>Unchecked</checkbox>
+  <checkbox indeterminate="true">Partial</checkbox>
+</column>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.column(.{ .gap = 12 }, .{
+    ui.el(.checkbox, .{ .text = "Agree", .checked = true, .on_change = .toggle }, .{}),
+    ui.el(.checkbox, .{ .text = "Unchecked" }, .{}),
+    ui.el(.checkbox, .{ .text = "Partial", .indeterminate = true }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute       | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `text`          | Label text; a literal or one `{binding}`.             |
+| `checked`       | Checked state; `true`/`false` or a `{binding}`.       |
+| `indeterminate` | Indeterminate state; `true`/`false` or a `{binding}`. |
+| `disabled`      | Disables the control.                                 |
+| `on-change`     | Dispatch a Msg when state changes.                    |

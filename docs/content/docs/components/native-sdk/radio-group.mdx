@@ -1,0 +1,49 @@
+---
+title: Radio Group
+description: A group of mutually exclusive radio buttons.
+---
+
+<ComponentPreview component="radio-group" />
+
+## Definition
+
+A group of mutually exclusive radio buttons. Supports vertical and horizontal layouts with configurable spacing.
+
+## Markup
+
+```xml
+<radio-group axis="vertical" on-change="select_option">
+  <radio value="opt1" checked="true">Option 1</radio>
+  <radio value="opt2">Option 2</radio>
+  <radio value="opt3">Option 3</radio>
+</radio-group>
+```
+
+### Horizontal
+
+```xml
+<radio-group axis="horizontal" on-change="select">
+  <radio value="yes" checked="true">Yes</radio>
+  <radio value="no">No</radio>
+</radio-group>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.column(.{ .gap = 8 }, .{
+    ui.el(.radio, .{ .value = "opt1", .text = "Option 1", .checked = true }, .{}),
+    ui.el(.radio, .{ .value = "opt2", .text = "Option 2" }, .{}),
+    ui.el(.radio, .{ .value = "opt3", .text = "Option 3" }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute   | Description                                   |
+| ----------- | --------------------------------------------- |
+| `value`     | Radio value; a literal or one `{binding}`.    |
+| `checked`   | Selected state.                               |
+| `disabled`  | Disables the control.                         |
+| `axis`      | Layout direction: `vertical` \| `horizontal`. |
+| `on-change` | Dispatch a Msg when selection changes.        |

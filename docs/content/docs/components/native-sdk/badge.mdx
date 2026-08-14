@@ -1,0 +1,42 @@
+---
+title: Badge
+description: A macOS sidebar count badge.
+---
+
+<ComponentPreview component="badge" />
+
+## Definition
+
+A text leaf for counts and statuses — the content is the label, `variant` picks the color treatment, and an optional `icon` draws inline before the text. Badges are not interactive — for a pressable chip see [button](/docs/components/native-sdk/button).
+
+## Markup
+
+```xml
+<row gap="10" cross="center">
+  <badge>128</badge>
+  <badge variant="secondary">New</badge>
+  <badge variant="outline">Outline</badge>
+  <badge variant="destructive">3</badge>
+</row>
+```
+
+## Programmatic construction (Zig)
+
+In a Zig view, the `canvas.Ui` builder constructs the same tree programmatically:
+
+```zig
+ui.row(.{ .gap = 10, .cross = .center }, .{
+    ui.el(.badge, .{ .text = "128" }, .{}),
+    ui.el(.badge, .{ .text = "New", .variant = .secondary }, .{}),
+    ui.el(.badge, .{ .text = "Outline", .variant = .outline }, .{}),
+    ui.el(.badge, .{ .text = "3", .variant = .destructive }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute | Description                                                             |
+| --------- | ----------------------------------------------------------------------- |
+| `text`    | Text value; a literal or one `{binding}`.                               |
+| `variant` | Visual variant: `default` \| `secondary` \| `outline` \| `destructive`. |
+| `icon`    | Vector icon drawn inline before the text.                               |
