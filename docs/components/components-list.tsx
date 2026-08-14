@@ -1,11 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { ROUTES } from "@/constants/routes";
 import type { PageTreePage } from "@/lib/page-tree";
 import { source } from "@/lib/source";
+
+const ComponentPreviewLive = dynamic(
+  () =>
+    import("@/components/component-preview-live").then(
+      (mod) => mod.ComponentPreviewLive
+    ),
+  { ssr: false }
+);
 
 const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   badge: "A small status indicator or label.",
@@ -52,24 +61,37 @@ function detectBase(pathname: string): "gpui" | "native-sdk" | null {
   return null;
 }
 
-const ComponentGrid = ({ pages }: { pages: PageTreePage[] }) => (
-  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-    {pages.map((component) => (
-      <Link
-        className="group flex flex-col gap-1 rounded-xl border bg-card p-4 transition-colors hover:bg-accent/50"
-        href={component.url}
-        key={component.$id}
-      >
-        <span className="text-sm font-medium group-hover:text-accent-foreground">
-          {component.name}
-        </span>
-        <span className="text-xs text-muted-foreground">
-          {COMPONENT_DESCRIPTIONS[String(component.name)] ??
-            "A macOS-style control."}
-        </span>
-      </Link>
-    ))}
-  </div>
+const ComponentCard = ({
+  component,
+  base,
+}: {
+  component: PageTreePage;
+  base: "gpui" | "native-sdk";
+}) => (
+  <Link
+    className="group flex flex-col gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-accent/50"
+    href={component.url}
+    key={component.$id}
+  >
+    <div className="flex h-[140px] items-center justify-center overflow-hidden rounded-lg bg-muted/50">
+      {base === "native-sdk" ? (
+        <ComponentPreviewLive name={String(component.name)} height={120} />
+      ) : (
+        <div className="flex items-center justify-center text-xs text-muted-foreground">
+          Preview
+        </div>
+      )}
+    </div>
+    <div className="flex flex-col gap-1">
+      <span className="text-sm font-medium group-hover:text-accent-foreground">
+        {component.name}
+      </span>
+      <span className="text-xs text-muted-foreground">
+        {COMPONENT_DESCRIPTIONS[String(component.name)] ??
+          "A macOS-style control."}
+      </span>
+    </div>
+  </Link>
 );
 
 export const ComponentsList = () => {
@@ -86,5 +108,11 @@ export const ComponentsList = () => {
     return null;
   }
 
-  return <ComponentGrid pages={pages} />;
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {pages.map((component) => (
+        <ComponentCard component={component} base={base} key={component.$id} />
+      ))}
+    </div>
+  );
 };
