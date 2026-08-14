@@ -1,0 +1,25 @@
+{
+  "title": "GPUI",
+  "pages": [
+    "!index",
+    "badge",
+    "box",
+    "button",
+    "checkbox",
+    "glass-panel",
+    "help-button",
+    "label",
+    "pop-up-button",
+    "progress",
+    "radio-group",
+    "search-field",
+    "secure-field",
+    "segmented-control",
+    "separator",
+    "slider",
+    "spinner",
+    "stepper",
+    "switch",
+    "text-field"
+  ]
+}

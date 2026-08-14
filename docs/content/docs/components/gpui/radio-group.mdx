@@ -1,0 +1,80 @@
+---
+title: Radio Group
+description: A group of mutually exclusive radio buttons.
+---
+
+<ComponentPreview component="radio-group" />
+
+## Definition
+
+A group of mutually exclusive radio buttons (`NSRadioButton`). Supports vertical and horizontal layouts with configurable spacing.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacRadioGroup, MacRadio, RadioAxis};
+
+MacRadioGroup::new("options")
+    .axis(RadioAxis::Vertical)
+    .gap(8)
+    .children(vec![
+        MacRadio::new("opt1").checked(true).child("Option 1"),
+        MacRadio::new("opt2").child("Option 2"),
+        MacRadio::new("opt3").child("Option 3"),
+    ])
+    .on_change(|value, _, _, cx| {
+        println!("Selected: {}", value);
+    })
+```
+
+### Horizontal
+
+```rust
+MacRadioGroup::new("h-options")
+    .axis(RadioAxis::Horizontal)
+    .children(vec![
+        MacRadio::new("h1").checked(true).child("Yes"),
+        MacRadio::new("h2").child("No"),
+    ])
+```
+
+### Sizes
+
+```rust
+MacRadio::new("xl").size(MacControlSize::ExtraLarge)
+MacRadio::new("l").size(MacControlSize::Large)
+MacRadio::new("r") // Regular (default)
+MacRadio::new("s").size(MacControlSize::Small)
+MacRadio::new("m").size(MacControlSize::Mini)
+```
+
+## API
+
+### MacRadioGroup Props
+
+| Prop   | Type             | Default    |
+| ------ | ---------------- | ---------- |
+| `size` | `MacControlSize` | `Regular`  |
+| `axis` | `RadioAxis`      | `Vertical` |
+| `gap`  | `f32`            | `0.0`      |
+
+### MacRadio Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `checked`  | `bool`           | `false`   |
+| `disabled` | `bool`           | `false`   |
+
+### Events
+
+| Event       | Payload                                      |
+| ----------- | -------------------------------------------- |
+| `on_change` | `(bool, &ClickEvent, &mut Window, &mut App)` |

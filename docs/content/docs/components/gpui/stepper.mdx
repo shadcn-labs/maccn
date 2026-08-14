@@ -1,0 +1,65 @@
+---
+title: Stepper
+description: An increment/decrement control with up and down chevrons.
+---
+
+<ComponentPreview component="stepper" />
+
+## Definition
+
+An increment/decrement control with up and down chevron buttons. Available in all five macOS control sizes.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::MacStepper;
+
+MacStepper::new("quantity")
+    .on_increment(|_, cx| {
+        println!("Incremented");
+    })
+    .on_decrement(|_, cx| {
+        println!("Decremented");
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacStepper::new("xl").size(MacControlSize::ExtraLarge)
+MacStepper::new("l").size(MacControlSize::Large)
+MacStepper::new("r") // Regular (default)
+MacStepper::new("s").size(MacControlSize::Small)
+MacStepper::new("m").size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacStepper::new("st").disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### Events
+
+| Event          | Payload                   |
+| -------------- | ------------------------- |
+| `on_increment` | `(&mut Window, &mut App)` |
+| `on_decrement` | `(&mut Window, &mut App)` |

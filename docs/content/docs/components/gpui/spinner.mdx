@@ -1,0 +1,39 @@
+---
+title: Spinner
+description: An animated loading indicator with spinning blades.
+---
+
+<ComponentPreview component="spinner" />
+
+## Definition
+
+An animated loading indicator (`NSProgressIndicator` spinning style) with 8 blades and an 800ms repeating animation. Two sizes: `Regular` (32px) and `Small` (16px).
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::MacSpinner;
+
+// Regular size (default)
+MacSpinner::new("loading")
+
+// Small size
+MacSpinner::new("loading-sm")
+    .size(MacControlSize::Small)
+```
+
+## API
+
+### Props
+
+| Prop    | Type             | Default   |
+| ------- | ---------------- | --------- |
+| `size`  | `MacControlSize` | `Regular` |
+| `color` | `Option<Color>`  | `None`    |

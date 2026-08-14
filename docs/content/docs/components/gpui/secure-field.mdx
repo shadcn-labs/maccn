@@ -1,0 +1,63 @@
+---
+title: Secure Field
+description: A masked password input field.
+---
+
+<ComponentPreview component="secure-field" />
+
+## Definition
+
+A masked password input field (`NSSecureTextField`). The input state must be created with `.masked(true)` to enable secure text entry.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacSecureField, InputState};
+
+let state = cx.new_entity(InputState::new().masked(true));
+
+MacSecureField::new("password", state.clone())
+    .on_submit(|value, _, _, cx| {
+        println!("Password entered");
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSecureField::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
+MacSecureField::new("l", state.clone()).size(MacControlSize::Large)
+MacSecureField::new("r", state.clone()) // Regular (default)
+MacSecureField::new("s", state.clone()).size(MacControlSize::Small)
+MacSecureField::new("m", state.clone()).size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacSecureField::new("sf", state.clone()).disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### Events
+
+| Event       | Payload                                      |
+| ----------- | -------------------------------------------- |
+| `on_submit` | `(&str, &ClickEvent, &mut Window, &mut App)` |

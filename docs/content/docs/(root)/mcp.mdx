@@ -1,0 +1,28 @@
+---
+title: MCP
+description: Learn how to use the shadcn MCP (Model Context Protocol) server with maccn.
+---
+
+[MCP](https://modelcontextprotocol.io/) is an open protocol that standardizes how applications provide context to LLMs. The shadcn CLI can register an MCP server so your editor can discover registry components—including items you install from **maccn** via the same CLI.
+
+## Configure MCP
+
+Run:
+
+```bash
+npx shadcn@latest mcp init
+```
+
+Choose your MCP client when prompted, then enable the MCP server in that client to finish setup.
+
+## Usage
+
+With MCP enabled, you can ask your IDE to work with **maccn** registry components. Example prompts:
+
+- Create a settings view with **Button**, **Switch**, and **Checkbox**.
+- Build a form layout with **TextField**, **SearchField**, and **RadioGroup**.
+- Add a **ProgressBar** and **Spinner** to a loading state.
+- Lay out a sidebar using **SegmentedControl**, **Label**, and **Separator**.
+- Implement a dialog with **GlassPanel**, **Stepper**, and **Slider**.
+
+Install components from this registry with `npx shadcn@latest add` and the JSON URL from each docs page. Components work with sensible defaults.

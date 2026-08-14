@@ -1,9 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { ROUTES } from "@/constants/routes";
-import { isComponentsFolder } from "@/lib/docs";
-import type { PageTreeFolder, PageTreePage } from "@/lib/page-tree";
-import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
+import type { PageTreePage } from "@/lib/page-tree";
 import { source } from "@/lib/source";
 
 const COMPONENT_DESCRIPTIONS: Record<string, string> = {
@@ -15,7 +16,8 @@ const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   "help-button": "A circular help button with a question mark glyph.",
   label: "A text label with macOS typography styles.",
   "pop-up-button": "A dropdown button that opens a popover menu.",
-  progress: "A horizontal progress bar with determinate and indeterminate modes.",
+  progress:
+    "A horizontal progress bar with determinate and indeterminate modes.",
   "radio-group": "A group of mutually exclusive radio buttons.",
   "search-field": "A search input with magnifier icon and clear button.",
   "secure-field": "A masked password input field.",
@@ -28,13 +30,27 @@ const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   "text-field": "A text input with placeholder, prefix, and suffix support.",
 };
 
-const getFolder = (name: string): PageTreeFolder | undefined => {
+function getFolderPages(folderName: string): PageTreePage[] {
   for (const node of source.pageTree.children) {
-    if (node.type === "folder" && node.name === name) {
-      return node;
+    if (node.type === "folder" && node.name === folderName) {
+      return node.children.filter(
+        (child): child is PageTreePage =>
+          child.type === "page" && child.name !== "index"
+      );
     }
   }
-};
+  return [];
+}
+
+function detectBase(pathname: string): "gpui" | "native-sdk" | null {
+  if (pathname.startsWith(ROUTES.DOCS_COMPONENTS_GPUI)) {
+    return "gpui";
+  }
+  if (pathname.startsWith(ROUTES.DOCS_COMPONENTS_NATIVE_SDK)) {
+    return "native-sdk";
+  }
+  return null;
+}
 
 const ComponentGrid = ({ pages }: { pages: PageTreePage[] }) => (
   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,40 +59,29 @@ const ComponentGrid = ({ pages }: { pages: PageTreePage[] }) => (
         className="group flex flex-col gap-1 rounded-xl border bg-card p-4 transition-colors hover:bg-accent/50"
         href={component.url}
         key={component.$id}
-        transitionTypes={["nav-forward"]}
       >
         <span className="text-sm font-medium group-hover:text-accent-foreground">
           {component.name}
         </span>
         <span className="text-xs text-muted-foreground">
-          {COMPONENT_DESCRIPTIONS[String(component.name)] ?? "A macOS-style control."}
+          {COMPONENT_DESCRIPTIONS[String(component.name)] ??
+            "A macOS-style control."}
         </span>
       </Link>
     ))}
   </div>
 );
 
-export const ComponentsList = ({
-  folderName = "Components",
-}: {
-  folderName?: string;
-}) => {
-  const folder = getFolder(folderName);
-  if (!folder) {
+export const ComponentsList = () => {
+  const pathname = usePathname();
+  const base = detectBase(pathname);
+
+  if (!base) {
     return null;
   }
 
-  if (!isComponentsFolder(folder)) {
-    const pages = getPagesFromFolder(folder);
-    if (pages.length === 0) {
-      return null;
-    }
-    return <ComponentGrid pages={pages} />;
-  }
+  const pages = getFolderPages(base === "gpui" ? "gpui" : "native-sdk");
 
-  const pages = getAllPagesFromFolder(folder).filter(
-    (page) => page.url !== ROUTES.DOCS_COMPONENTS
-  );
   if (pages.length === 0) {
     return null;
   }

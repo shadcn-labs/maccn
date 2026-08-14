@@ -1,0 +1,64 @@
+---
+title: Pop-Up Button
+description: A dropdown button that opens a popover menu.
+---
+
+<ComponentPreview component="pop-up-button" />
+
+## Definition
+
+A dropdown button (`NSPopUpButton`) that opens a popover menu. Supports items, separators, disabled states, and selection tracking.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacPopUpButton, MacPopUpButtonItem};
+
+MacPopUpButton::new("format")
+    .items(vec![
+        MacPopUpButtonItem::new("PDF"),
+        MacPopUpButtonItem::new("PNG"),
+        MacPopUpButtonItem::separator(),
+        MacPopUpButtonItem::new("Custom").disabled(true),
+    ])
+    .selected("PDF")
+    .on_change(|value, _, _, cx| {
+        println!("Selected: {}", value);
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacPopUpButton::new("xl").size(MacControlSize::ExtraLarge)
+MacPopUpButton::new("l").size(MacControlSize::Large)
+MacPopUpButton::new("r") // Regular (default)
+MacPopUpButton::new("s").size(MacControlSize::Small)
+MacPopUpButton::new("m").size(MacControlSize::Mini)
+```
+
+## API
+
+### Props
+
+| Prop          | Type             | Default   |
+| ------------- | ---------------- | --------- |
+| `size`        | `MacControlSize` | `Regular` |
+| `selected`    | `Option<&str>`   | `None`    |
+| `placeholder` | `Option<&str>`   | `None`    |
+| `disabled`    | `bool`           | `false`   |
+
+### Events
+
+| Event       | Payload                                      |
+| ----------- | -------------------------------------------- |
+| `on_change` | `(&str, &ClickEvent, &mut Window, &mut App)` |

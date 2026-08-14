@@ -1,0 +1,96 @@
+---
+title: Text Field
+description: A text input with placeholder, prefix, and suffix support.
+---
+
+<ComponentPreview component="text-field" />
+
+## Definition
+
+A text input field (`NSTextField`) with placeholder text, prefix/suffix elements, and configurable corner radius. Requires an `InputState` entity.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacTextField, InputState};
+
+let state = cx.new_entity(InputState::new());
+
+MacTextField::new("email", state.clone())
+    .placeholder("you@example.com")
+    .on_submit(|value, _, _, cx| {
+        println!("Email: {}", value);
+    })
+```
+
+### Pill Mode
+
+```rust
+MacTextField::new("search", state.clone())
+    .pill()
+    .placeholder("Search...")
+```
+
+### Prefix and Suffix
+
+```rust
+MacTextField::new("url", state.clone())
+    .prefix(MacLabel::new("proto").child("https://"))
+    .suffix(MacLabel::new("tld").child(".com"))
+```
+
+### Custom Radius
+
+```rust
+MacTextField::new("custom", state.clone())
+    .radius(8.0)
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacTextField::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
+MacTextField::new("l", state.clone()).size(MacControlSize::Large)
+MacTextField::new("r", state.clone()) // Regular (default)
+MacTextField::new("s", state.clone()).size(MacControlSize::Small)
+MacTextField::new("m", state.clone()).size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacTextField::new("tf", state.clone()).disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### Methods
+
+| Method            | Description                  |
+| ----------------- | ---------------------------- |
+| `pill()`          | Enables pill-shaped styling. |
+| `prefix(element)` | Adds a prefix element.       |
+| `suffix(element)` | Adds a suffix element.       |
+| `radius(f32)`     | Sets custom corner radius.   |
+
+### Events
+
+| Event       | Payload                                      |
+| ----------- | -------------------------------------------- |
+| `on_submit` | `(&str, &ClickEvent, &mut Window, &mut App)` |

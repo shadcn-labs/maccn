@@ -1,0 +1,61 @@
+---
+title: Help Button
+description: A circular help button with a question mark glyph.
+---
+
+<ComponentPreview component="help-button" />
+
+## Definition
+
+A circular help button (`NSButton` help style) with a `?` glyph. Available in all five macOS control sizes.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::MacHelpButton;
+
+MacHelpButton::new("help")
+    .on_click(|_, _, cx| {
+        println!("Help clicked");
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacHelpButton::new("xl").size(MacControlSize::ExtraLarge)
+MacHelpButton::new("l").size(MacControlSize::Large)
+MacHelpButton::new("r") // Regular (default)
+MacHelpButton::new("s").size(MacControlSize::Small)
+MacHelpButton::new("m").size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacHelpButton::new("hb").disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### Events
+
+| Event      | Payload                                |
+| ---------- | -------------------------------------- |
+| `on_click` | `(&ClickEvent, &mut Window, &mut App)` |

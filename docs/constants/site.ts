@@ -20,13 +20,14 @@ export const SITE = {
     TWITTER: "@alaymanguy",
   },
   DESCRIPTION: {
-    LONG: "macOS-inspired controls, built for GPUI on top of gpui-base.",
-    SHORT: "macOS-inspired GPUI components",
+    LONG: "Ready to use, customizable macOS UI components for GPUI and Native SDK. AppKit metrics, light and dark appearances, and a system accent.",
+    SHORT: "Beautiful Mac UIs, made simple",
   },
   KEYWORDS: [
     "gpui",
-    "gpui-base",
+    "native-sdk",
     "rust",
+    "typescript",
     "ui",
     "components",
     "macos",
@@ -34,6 +35,7 @@ export const SITE = {
   ] as const,
   NAME: "maccn",
   OG_IMAGE: `${baseUrl}/og`,
+  REGISTRY: "@maccn",
   URL: baseUrl,
 };
 

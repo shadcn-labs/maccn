@@ -1,0 +1,59 @@
+---
+title: Registry
+description: Learn how to use the maccn registry with the shadcn CLI.
+---
+
+The **maccn** registry ships GPUI and Native SDK components in the [shadcn registry format](https://ui.shadcn.com/docs/registry). Register the namespace once in `components.json`, then pull items by name with the CLI.
+
+## Setup
+
+Add a **registries** entry for this site. See the [shadcn registry documentation](https://ui.shadcn.com/docs/registry) for all `components.json` fields and behaviors.
+
+```json
+{
+  "registries": {
+    "@maccn": "https://maccn.dev/r/{name}.json"
+  }
+}
+```
+
+You can replace `@maccn` with another namespace; it only needs to match what you pass to `shadcn add`.
+
+## Usage
+
+Items are namespaced by base: `gpui/` for GPUI and `native-sdk/` for Native SDK.
+
+Registry files follow these destinations:
+
+- Components install into `components/ui/`.
+- Blocks install into the configured blocks directory.
+
+Components declare their dependencies, so installing a component does not require additional setup.
+
+### GPUI
+
+Install a component:
+
+```bash
+npx shadcn@latest add @maccn/gpui/button
+```
+
+Without a registry alias, use the full URL (as on each docs page):
+
+```bash
+npx shadcn@latest add https://maccn.dev/r/gpui/button.json
+```
+
+### Native SDK
+
+Install a component:
+
+```bash
+npx shadcn@latest add @maccn/native-sdk/button
+```
+
+Without a registry alias, use the full URL (as on each docs page):
+
+```bash
+npx shadcn@latest add https://maccn.dev/r/native-sdk/button.json
+```

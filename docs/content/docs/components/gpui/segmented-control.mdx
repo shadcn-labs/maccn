@@ -1,0 +1,72 @@
+---
+title: Segmented Control
+description: A segmented control for switching between views.
+---
+
+<ComponentPreview component="segmented-control" />
+
+## Definition
+
+A segmented control (`NSSegmentedControl`) for switching between views. Each segment can be individually selected, sized, and disabled.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacSegmentedControl, MacSegment};
+
+MacSegmentedControl::new("view-toggle")
+    .segments(vec![
+        MacSegment::new("list").selected(true).child("List"),
+        MacSegment::new("grid").child("Grid"),
+        MacSegment::new("columns").child("Columns"),
+    ])
+    .on_click(|segment, _, _, cx| {
+        println!("Selected: {}", segment);
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSegmentedControl::new("xl")
+    .size(MacControlSize::ExtraLarge)
+    .segments(vec![...])
+```
+
+### Disabled
+
+```rust
+MacSegmentedControl::new("sc").disabled(true)
+```
+
+## API
+
+### MacSegmentedControl Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### MacSegment Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `selected` | `bool`           | `false`   |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### Events
+
+| Event      | Payload                                |
+| ---------- | -------------------------------------- |
+| `on_click` | `(&ClickEvent, &mut Window, &mut App)` |

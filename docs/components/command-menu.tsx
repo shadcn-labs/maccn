@@ -5,9 +5,8 @@ import {
   ArrowRightIcon,
   CornerDownLeftIcon,
   CircleDashedIcon,
-  SquareDashedIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -29,39 +28,26 @@ import {
 } from "@/components/ui/dialog";
 import { Kbd } from "@/components/ui/kbd";
 import { Separator } from "@/components/ui/separator";
-import { ROUTES } from "@/constants/routes";
+import { SITE } from "@/constants/site";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useFeedback } from "@/hooks/use-feedback";
 import { useIsMac } from "@/hooks/use-is-mac";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
 import { usePackageManager } from "@/hooks/use-package-manager";
-import { EXCLUDED_SECTIONS, isComponentsFolder } from "@/lib/docs";
 import { trackEvent } from "@/lib/events";
-import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
+import { getCurrentBase, getTreeGroups } from "@/lib/page-tree";
 import { cn } from "@/lib/utils";
 
-type DocUrlKind =
-  | { kind: "theme"; slug: string }
-  | { kind: "component"; slug: string }
-  | { kind: "template"; slug: string }
-  | { kind: "page" };
+type DocUrlKind = { kind: "component"; slug: string } | { kind: "page" };
 
 const GROUP_HEADING_CLS =
   "!p-0 [&_[cmdk-group-heading]]:scroll-mt-16 [&_[cmdk-group-heading]]:!p-3 [&_[cmdk-group-heading]]:!pb-1";
 
 const parseDocPageUrl = (url: string): DocUrlKind => {
   const parts = url.split("/").filter(Boolean);
-  const themesIdx = parts.indexOf("themes");
-  if (themesIdx !== -1 && parts[themesIdx + 1]) {
-    return { kind: "theme", slug: parts[themesIdx + 1] };
-  }
   const componentsIdx = parts.indexOf("components");
   if (componentsIdx !== -1 && parts[componentsIdx + 1]) {
     return { kind: "component", slug: parts.at(-1) ?? "" };
-  }
-  const templatesIdx = parts.indexOf("templates");
-  if (templatesIdx !== -1 && parts[templatesIdx + 1]) {
-    return { kind: "template", slug: parts.at(-1) ?? "" };
   }
   return { kind: "page" };
 };
@@ -84,21 +70,8 @@ const buildDocPageKeywords = (
 ];
 
 const DocPageLeadingIcon = ({ parsed }: { parsed: DocUrlKind }) => {
-  // if (parsed.kind === "theme") {
-  //   const color = themePrimaryBySlug[parsed.slug];
-  //   return (
-  //     <span
-  //       className="border-border/60 size-4 shrink-0 rounded-sm border"
-  //       style={color ? { backgroundColor: color } : undefined}
-  //       aria-hidden
-  //     />
-  //   );
-  // }
   if (parsed.kind === "component") {
     return <CircleDashedIcon />;
-  }
-  if (parsed.kind === "template") {
-    return <SquareDashedIcon />;
   }
   return <ArrowRightIcon />;
 };
@@ -142,21 +115,21 @@ const CommandMenuItem = ({
 };
 
 export const CommandMenu = ({
-  blocks,
   navItems,
   tree,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
-  blocks?: { name: string; description: string; categories: string[] }[];
   navItems: { href: string; label: string }[];
   tree: PageTreeRoot;
 }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const isMac = useIsMac();
   const [packageManager] = usePackageManager();
   const [open, setOpen] = useState(false);
   const [showGoToPage, setShowGoToPage] = useState(false);
   const [copyPayload, setCopyPayload] = useState("");
+  const currentBase = getCurrentBase(pathname);
   const copyFeedback = useFeedback({ sound: "copy" });
 
   const { copyToClipboard } = useCopyToClipboard({
@@ -170,52 +143,24 @@ export const CommandMenu = ({
     },
   });
 
-  const treeGroups = useMemo(() => {
-    const groups: { label: string; pages: { url: string; name: string }[] }[] =
-      [];
-    for (const item of tree.children) {
-      if (item.type !== "folder") {
-        continue;
-      }
-      if (EXCLUDED_SECTIONS.has(item.$id ?? "")) {
-        continue;
-      }
-
-      const pages = (
-        isComponentsFolder(item)
-          ? getAllPagesFromFolder(item).filter(
-              (page) => page.url !== ROUTES.DOCS_COMPONENTS
-            )
-          : getPagesFromFolder(item)
-      ).map((p) => ({
-        name: typeof p.name === "string" ? p.name : String(p.name),
-        url: p.url,
-      }));
-      if (pages.length > 0) {
-        groups.push({
-          label: typeof item.name === "string" ? item.name : String(item.name),
-          pages,
-        });
-      }
-    }
-    return groups;
-  }, [tree]);
+  const treeGroups = useMemo(
+    () => getTreeGroups(tree, currentBase),
+    [tree, currentBase]
+  );
 
   const handleDocPageHighlight = useCallback(
     (item: { url: string; name?: string }) => {
       setShowGoToPage(true);
       const parsed = parseDocPageUrl(item.url);
-      setCopyPayload(parsed.kind === "page" ? (item.url ?? "") : "");
+      if (parsed.kind === "component") {
+        setCopyPayload(
+          `${packageManager} dlx shadcn@latest add ${SITE.REGISTRY}/${parsed.slug}`
+        );
+        return;
+      }
+      setCopyPayload("");
     },
-    []
-  );
-
-  const handleBlockHighlight = useCallback(
-    (block: { name: string; description: string; categories: string[] }) => {
-      setShowGoToPage(true);
-      setCopyPayload(block.name);
-    },
-    []
+    [packageManager]
   );
 
   const runCommand = useCallback((command: () => unknown) => {
@@ -284,7 +229,11 @@ export const CommandMenu = ({
         });
       }
 
-      if (e.key === "c" && (e.metaKey || e.ctrlKey) && copyPayload) {
+      if (
+        e.key === "c" &&
+        (e.metaKey || e.ctrlKey) &&
+        copyPayload.includes("shadcn@latest")
+      ) {
         runCommand(() => {
           copyFeedback();
           copyToClipboard(copyPayload);
@@ -358,43 +307,16 @@ export const CommandMenu = ({
                 heading={group.label}
               >
                 {group.pages.map((page) =>
-                  renderDocPageItem(page.name, page.url, [group.label])
+                  renderDocPageItem(
+                    typeof page.name === "string"
+                      ? page.name
+                      : String(page.name),
+                    page.url,
+                    [group.label]
+                  )
                 )}
               </CommandGroup>
             ))}
-            {blocks?.length ? (
-              <CommandGroup
-                heading="Blocks"
-                className="p-0! **:[[cmdk-group-heading]]:p-3!"
-              >
-                {blocks.map((block) => (
-                  <CommandMenuItem
-                    key={block.name}
-                    value={block.name}
-                    onHighlight={() => handleBlockHighlight(block)}
-                    keywords={[
-                      "block",
-                      block.name,
-                      block.description,
-                      ...block.categories,
-                    ]}
-                    onSelect={() =>
-                      runCommand(() =>
-                        router.push(
-                          `/blocks/${block.categories[0]}#${block.name}`
-                        )
-                      )
-                    }
-                  >
-                    <SquareDashedIcon />
-                    {block.description}
-                    <span className="text-muted-foreground ml-auto font-mono text-xs font-normal tabular-nums">
-                      {block.name}
-                    </span>
-                  </CommandMenuItem>
-                ))}
-              </CommandGroup>
-            ) : null}
           </CommandList>
         </Command>
         <div className="text-muted-foreground absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-2 overflow-hidden rounded-b-xl border-t border-t-neutral-100 bg-neutral-50 px-4 text-xs font-medium dark:border-t-neutral-700 dark:bg-neutral-800">

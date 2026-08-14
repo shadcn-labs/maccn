@@ -1,0 +1,71 @@
+---
+title: Checkbox
+description: A tri-state checkbox with check and indeterminate marks.
+---
+
+<ComponentPreview component="checkbox" />
+
+## Definition
+
+A tri-state checkbox (`NSButton` checkbox style) with check and indeterminate marks. Supports `Checked`, `Unchecked`, and `Indeterminate` states.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacCheckbox, CheckboxState};
+
+MacCheckbox::new("agree")
+    .checked(true)
+    .on_change(|state, _, _, cx| {
+        println!("State: {:?}", state);
+    })
+```
+
+### Indeterminate
+
+```rust
+MacCheckbox::new("partial")
+    .indeterminate(true)
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacCheckbox::new("xl").size(MacControlSize::ExtraLarge)
+MacCheckbox::new("l").size(MacControlSize::Large)
+MacCheckbox::new("r") // Regular (default)
+MacCheckbox::new("s").size(MacControlSize::Small)
+MacCheckbox::new("m").size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacCheckbox::new("cb").disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop            | Type             | Default   |
+| --------------- | ---------------- | --------- |
+| `size`          | `MacControlSize` | `Regular` |
+| `checked`       | `bool`           | `false`   |
+| `indeterminate` | `bool`           | `false`   |
+| `disabled`      | `bool`           | `false`   |
+
+### Events
+
+| Event       | Payload                                               |
+| ----------- | ----------------------------------------------------- |
+| `on_change` | `(CheckboxState, &ClickEvent, &mut Window, &mut App)` |

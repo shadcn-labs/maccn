@@ -1,0 +1,76 @@
+---
+title: Slider
+description: A draggable slider for selecting a value in a range.
+---
+
+<ComponentPreview component="slider" />
+
+## Definition
+
+A draggable slider (`NSSlider`) for selecting a value within a range. Requires a `SliderState` entity to manage min, max, and default values.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::{MacSlider, SliderState};
+
+let state = cx.new_entity(
+    SliderState::new()
+        .min(0.0)
+        .max(100.0)
+        .default_value(50.0)
+);
+
+MacSlider::new("volume", state.clone())
+    .on_change(|value, _, _, cx| {
+        println!("Value: {}", value);
+    })
+```
+
+### Sizes
+
+All five macOS control sizes; `regular` is the default.
+
+```rust
+MacSlider::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
+MacSlider::new("l", state.clone()).size(MacControlSize::Large)
+MacSlider::new("r", state.clone()) // Regular (default)
+MacSlider::new("s", state.clone()).size(MacControlSize::Small)
+MacSlider::new("m", state.clone()).size(MacControlSize::Mini)
+```
+
+### Disabled
+
+```rust
+MacSlider::new("sl", state.clone()).disabled(true)
+```
+
+## API
+
+### Props
+
+| Prop       | Type             | Default   |
+| ---------- | ---------------- | --------- |
+| `size`     | `MacControlSize` | `Regular` |
+| `disabled` | `bool`           | `false`   |
+
+### SliderState Methods
+
+| Method                 | Description             |
+| ---------------------- | ----------------------- |
+| `min(value)`           | Sets the minimum value. |
+| `max(value)`           | Sets the maximum value. |
+| `default_value(value)` | Sets the initial value. |
+
+### Events
+
+| Event       | Payload                                     |
+| ----------- | ------------------------------------------- |
+| `on_change` | `(f32, &ClickEvent, &mut Window, &mut App)` |

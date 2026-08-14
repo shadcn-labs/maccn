@@ -1,6 +1,6 @@
 "use client";
 
-import { DownloadIcon } from "lucide-react";
+import { DownloadIcon, SquareDashedIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useCallback } from "react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
@@ -22,13 +23,12 @@ export const BrandContextMenu = ({
   const { resolvedTheme } = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const logoMarkSvgString = getLogoMarkSVG(
-    resolvedTheme === "light" ? "#000" : "#fff"
-  );
+  const color = resolvedTheme === "light" ? "#000" : "#fff";
+  const logoMarkSvgString = getLogoMarkSVG(color);
 
-  const handleCopy = useCallback(() => {
+  const handleCopyLogomark = useCallback(() => {
     copyToClipboard(logoMarkSvgString);
-    toast.success("Icon as SVG copied");
+    toast.success("Logomark as SVG copied");
   }, [logoMarkSvgString, copyToClipboard]);
 
   const handleDownload = useCallback(() => {
@@ -49,13 +49,38 @@ export const BrandContextMenu = ({
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
 
       <ContextMenuContent>
-        <ContextMenuItem onClick={handleCopy}>
+        <ContextMenuItem onClick={handleCopyLogomark}>
           <LogoMark />
-          Copy as SVG
+          Copy Logomark as SVG
         </ContextMenuItem>
 
         <ContextMenuItem onClick={handleDownload}>
-          <DownloadIcon /> Download as SVG
+          <DownloadIcon />
+          Download as SVG
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuItem asChild>
+          <a
+            href="https://shadcn-labs.com/brand"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SquareDashedIcon />
+            Brand Guidelines
+          </a>
+        </ContextMenuItem>
+
+        <ContextMenuItem asChild>
+          <a
+            href="https://shadcn-labs.com/shadcn-labs-brand.zip"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <DownloadIcon />
+            Download Brand Assets
+          </a>
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

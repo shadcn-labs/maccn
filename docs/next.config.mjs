@@ -20,14 +20,6 @@ const nextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: "/examples",
-        destination: "/examples/index.html",
-      },
-    ];
-  },
   redirects() {
     return [
       {
@@ -39,6 +31,14 @@ const nextConfig = {
         destination: `${ROUTES.DOCS}/:path*.md`,
         permanent: true,
         source: `${ROUTES.DOCS}/:path*.mdx`,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        destination: "/examples/index.html",
+        source: "/examples",
       },
     ];
   },

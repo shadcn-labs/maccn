@@ -3,20 +3,13 @@ title: Installation
 description: Add maccn to your GPUI project.
 ---
 
-## Workspace layout
+## Prerequisites
 
-The repository is a monorepo:
+A Rust project that can run [GPUI](https://gpui.rs) with [gpui-base](https://github.com/longbridge/gpui-component).
 
-```text
-crates/maccn/    # the component library (built on gpui-base)
-crates/maccn/examples/showcase.rs   # native demo
-crates/maccn/examples/wasm/         # WebAssembly demo
-docs/            # this Next.js documentation site
-```
+## Installation
 
-## Adding maccn to a project
-
-Add `maccn` to your `Cargo.toml` and initialize it in your app:
+Add `maccn` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -24,6 +17,8 @@ maccn = { git = "https://github.com/shadcn-labs/maccn" }
 gpui = { version = "0.2.2", git = "https://github.com/zed-industries/zed" }
 gpui-base = { git = "https://github.com/longbridge/gpui-component" }
 ```
+
+## Usage
 
 Call `maccn::init` when your application starts:
 
@@ -33,40 +28,7 @@ fn main() {
 }
 ```
 
-## Native example
-
-Run the showcase as a native window:
-
-```bash
-cargo run -p maccn --example showcase
-```
-
-Pass a component slug to open a specific demo:
-
-```bash
-cargo run -p maccn --example showcase -- switch
-```
-
-## Browser demo
-
-Build the WebAssembly demo into the docs site's `public` folder:
-
-```bash
-make -C crates/maccn/examples/wasm install   # once: wasm target + wasm-bindgen + deps
-make -C crates/maccn/examples/wasm build
-```
-
-Then run the docs site and open
-[localhost:3000/examples/?component=button](https://localhost:3000/examples/?component=button):
-
-```bash
-pnpm install
-pnpm dev
-```
-
-## Usage
-
-Create a view and compose the components:
+Then compose components in your view:
 
 ```rust
 use maccn::{MacButton, MacSwitch, ButtonVariant, theme::ThemeExt as _};
@@ -81,4 +43,35 @@ impl Render for SettingsView {
             .child(MacSwitch::new("wifi").checked(self.wifi))
     }
 }
+```
+
+## Native Example
+
+Run the showcase as a native window:
+
+```bash
+cargo run -p maccn --example showcase
+```
+
+Pass a component slug to open a specific demo:
+
+```bash
+cargo run -p maccn --example showcase -- switch
+```
+
+## Browser Demo
+
+Build the WebAssembly demo into the docs site's `public` folder:
+
+```bash
+make -C crates/maccn/examples/wasm install   # once: wasm target + wasm-bindgen + deps
+make -C crates/maccn/examples/wasm build
+```
+
+Then run the docs site and open
+[localhost:3000/examples/?component=button](https://localhost:3000/examples/?component=button):
+
+```bash
+pnpm install
+pnpm dev
 ```

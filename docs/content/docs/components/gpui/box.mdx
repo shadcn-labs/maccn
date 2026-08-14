@@ -1,0 +1,41 @@
+---
+title: Box
+description: A grouped settings container with rounded corners and padding.
+---
+
+<ComponentPreview component="box" />
+
+## Definition
+
+A grouped settings container (`NSBox`): a rounded rectangle that visually groups related controls. Provides a labeled region with padding and a subtle border.
+
+## Installation
+
+```toml
+[dependencies]
+maccn = "0.1"
+```
+
+## Usage
+
+```rust
+use maccn::MacBox;
+
+MacBox::new("settings-group")
+    .child("Content here")
+```
+
+## API
+
+### Constructor
+
+| Method            | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| `MacBox::new(id)` | Creates a new box container with the given element ID. |
+
+### Traits
+
+| Trait           | Description                           |
+| --------------- | ------------------------------------- |
+| `Styled`        | Set background, border, padding, etc. |
+| `ParentElement` | Add child elements via `.child()`.    |

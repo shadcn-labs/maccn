@@ -3,8 +3,8 @@
 import type { Root as PageTreeRoot } from "fumadocs-core/page-tree";
 import type { LinkProps } from "next/link";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { TOP_LEVEL_SECTIONS } from "@/constants/nav";
 import { ROUTES } from "@/constants/routes";
 import { useFeedback } from "@/hooks/use-feedback";
-import { EXCLUDED_SECTIONS, isComponentsFolder } from "@/lib/docs";
-import { getAllPagesFromFolder, getPagesFromFolder } from "@/lib/page-tree";
+import { getCurrentBase, getTreeGroups } from "@/lib/page-tree";
 import { cn } from "@/lib/utils";
 
 const MobileLink = ({
@@ -86,6 +86,12 @@ export const MobileNav = ({
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const currentBase = getCurrentBase(pathname);
+  const treeGroups = useMemo(
+    () => getTreeGroups(tree, currentBase),
+    [tree, currentBase]
+  );
 
   return (
     <Popover sounds open={open} onOpenChange={setOpen}>
@@ -93,7 +99,7 @@ export const MobileNav = ({
         <Button
           variant="ghost"
           className={cn(
-            "extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 !p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent",
+            "extend-touch-target h-8 touch-manipulation items-center justify-start !p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent",
             className
           )}
         >
@@ -114,9 +120,6 @@ export const MobileNav = ({
             </div>
             <span className="sr-only">Toggle Menu</span>
           </div>
-          <span className="flex h-8 items-center text-lg leading-none font-medium">
-            Menu
-          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -127,48 +130,43 @@ export const MobileNav = ({
         sideOffset={14}
       >
         <div className="flex flex-col gap-12 overflow-auto px-6 py-6">
+          <div className="flex flex-col gap-3">
+            <MobileLink href={ROUTES.HOME} onOpenChange={setOpen}>
+              Home
+            </MobileLink>
+            {items.map((item) => (
+              <MobileLink
+                key={item.href}
+                href={item.href}
+                onOpenChange={setOpen}
+              >
+                {item.label}
+              </MobileLink>
+            ))}
+          </div>
           <div className="flex flex-col gap-4">
-            <div className="text-muted-foreground text-sm font-medium">
-              Menu
+            <div className="text-sm font-medium text-muted-foreground">
+              Sections
             </div>
             <div className="flex flex-col gap-3">
-              <MobileLink href={ROUTES.HOME} onOpenChange={setOpen}>
-                Home
-              </MobileLink>
-              {items.map((item) => (
-                <MobileLink
-                  key={item.href}
-                  href={item.href}
-                  onOpenChange={setOpen}
-                >
-                  {item.label}
+              {TOP_LEVEL_SECTIONS.map(({ name, href }) => (
+                <MobileLink key={name} href={href} onOpenChange={setOpen}>
+                  {name}
                 </MobileLink>
               ))}
             </div>
           </div>
-          {tree.children.map((item) => {
-            if (item.type !== "folder") {
-              return null;
-            }
-            if (EXCLUDED_SECTIONS.has(item.$id ?? "")) {
-              return null;
-            }
-
-            const pages = isComponentsFolder(item)
-              ? getAllPagesFromFolder(item).filter(
-                  (page) => page.url !== ROUTES.DOCS_COMPONENTS
-                )
-              : getPagesFromFolder(item);
-
-            return (
-              <MobileNavGroup
-                key={item.$id}
-                label={item.name}
-                pages={pages}
-                setOpen={setOpen}
-              />
-            );
-          })}
+          {treeGroups.map((group) => (
+            <MobileNavGroup
+              key={group.label}
+              label={group.label}
+              pages={group.pages.map((p) => ({
+                name: p.name,
+                url: p.url,
+              }))}
+              setOpen={setOpen}
+            />
+          ))}
         </div>
       </PopoverContent>
     </Popover>
