@@ -1,0 +1,43 @@
+---
+title: Pop-Up Button
+description: A dropdown button that opens a popover menu.
+---
+
+<ComponentPreview component="pop-up-button" />
+
+## Definition
+
+A dropdown button that opens a popover menu. Supports items, separators, disabled states, and selection tracking.
+
+## Markup
+
+```xml
+<pop-up-button value="pdf" on-change="set_format">
+  <pop-up-item value="pdf">PDF</pop-up-item>
+  <pop-up-item value="png">PNG</pop-up-item>
+  <pop-up-item value="jpeg">JPEG</pop-up-item>
+  <pop-up-item separator="true" />
+  <pop-up-item value="custom" disabled="true">Custom</pop-up-item>
+</pop-up-button>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.pop_up_button, .{ .value = "pdf", .on_change = .set_format }, .{
+    ui.el(.pop_up_item, .{ .value = "pdf", .text = "PDF" }, .{}),
+    ui.el(.pop_up_item, .{ .value = "png", .text = "PNG" }, .{}),
+    ui.el(.pop_up_item, .{ .value = "jpeg", .text = "JPEG" }, .{}),
+    ui.el(.pop_up_item, .{ .separator = true }, .{}),
+    ui.el(.pop_up_item, .{ .value = "custom", .text = "Custom", .disabled = true }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute     | Description                              |
+| ------------- | ---------------------------------------- |
+| `value`       | Currently selected value.                |
+| `placeholder` | Placeholder text when no value selected. |
+| `disabled`    | Disables the control.                    |
+| `on-change`   | Dispatch a Msg when selection changes.   |

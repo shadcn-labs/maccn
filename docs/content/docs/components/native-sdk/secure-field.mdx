@@ -1,0 +1,34 @@
+---
+title: Secure Field
+description: A masked password input field.
+---
+
+<ComponentPreview component="secure-field" />
+
+## Definition
+
+A masked password input field. Input is automatically masked with bullet characters.
+
+## Markup
+
+```xml
+<secure-field placeholder="Password" on-submit="login" />
+<secure-field disabled="true" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.secure_field, .{
+    .placeholder = "Password",
+    .on_submit = .login,
+}, .{})
+```
+
+## Attributes
+
+| Attribute     | Description                                |
+| ------------- | ------------------------------------------ |
+| `placeholder` | Placeholder text.                          |
+| `disabled`    | Disables the control.                      |
+| `on-submit`   | Dispatch a Msg when submitted (Enter key). |

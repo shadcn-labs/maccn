@@ -1,0 +1,38 @@
+---
+title: Progress
+description: A horizontal progress bar with determinate and indeterminate modes.
+---
+
+<ComponentPreview component="progress" />
+
+## Definition
+
+A horizontal progress bar with determinate and indeterminate modes. Two sizes: `regular` (10px) and `small` (6px).
+
+## Markup
+
+```xml
+<column gap="12">
+  <progress value="0.6" />
+  <progress value="0.35" size="sm" />
+  <progress indeterminate="true" />
+</column>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.column(.{ .gap = 12 }, .{
+    ui.el(.progress, .{ .value = 0.6 }, .{}),
+    ui.el(.progress, .{ .value = 0.35, .size = .sm }, .{}),
+    ui.el(.progress, .{ .indeterminate = true }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute       | Description                          |
+| --------------- | ------------------------------------ |
+| `value`         | Progress value between 0 and 1.      |
+| `indeterminate` | Show indeterminate (animated) state. |
+| `size`          | Control size: `sm` \| `default`.     |

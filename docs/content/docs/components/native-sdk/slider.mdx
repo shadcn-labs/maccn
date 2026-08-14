@@ -1,0 +1,38 @@
+---
+title: Slider
+description: A draggable slider for selecting a value in a range.
+---
+
+<ComponentPreview component="slider" />
+
+## Definition
+
+A draggable slider for selecting a value within a range. Supports min, max, and default value configuration.
+
+## Markup
+
+```xml
+<slider min="0" max="100" value="50" on-change="set_volume" />
+<slider min="0" max="1" value="0.75" disabled="true" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.slider, .{
+    .min = 0,
+    .max = 100,
+    .value = 50,
+    .on_change = .set_volume,
+}, .{})
+```
+
+## Attributes
+
+| Attribute   | Description                        |
+| ----------- | ---------------------------------- |
+| `min`       | Minimum value.                     |
+| `max`       | Maximum value.                     |
+| `value`     | Current value.                     |
+| `disabled`  | Disables the control.              |
+| `on-change` | Dispatch a Msg when value changes. |

@@ -1,0 +1,31 @@
+---
+title: Spinner
+description: An animated loading indicator with spinning blades.
+---
+
+<ComponentPreview component="spinner" />
+
+## Definition
+
+An animated loading indicator. Two sizes: `regular` (32px) and `small` (16px).
+
+## Markup
+
+```xml
+<spinner />
+<spinner size="sm" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.spinner, .{}, .{})
+ui.el(.spinner, .{ .size = .sm }, .{})
+```
+
+## Attributes
+
+| Attribute | Description                      |
+| --------- | -------------------------------- |
+| `size`    | Control size: `sm` \| `default`. |
+| `color`   | Custom color token.              |

@@ -1,0 +1,42 @@
+---
+title: Help Button
+description: A circular help button with a "?" glyph.
+---
+
+<ComponentPreview component="help-button" />
+
+## Definition
+
+A circular help button with a `?` glyph. Available in all five macOS control sizes.
+
+## Markup
+
+```xml
+<row gap="12" cross="center">
+  <help-button size="mini" on-press="help_mini" />
+  <help-button size="small" on-press="help_small" />
+  <help-button on-press="help_default" />
+  <help-button size="large" on-press="help_large" />
+  <help-button size="extra_large" disabled="true" />
+</row>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.row(.{ .gap = 12, .cross = .center }, .{
+    ui.el(.help_button, .{ .size = .mini, .on_press = .help_mini }, .{}),
+    ui.el(.help_button, .{ .size = .small, .on_press = .help_small }, .{}),
+    ui.el(.help_button, .{ .on_press = .help_default }, .{}),
+    ui.el(.help_button, .{ .size = .large, .on_press = .help_large }, .{}),
+    ui.el(.help_button, .{ .size = .extra_large, .disabled = true }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute  | Description                                                               |
+| ---------- | ------------------------------------------------------------------------- |
+| `size`     | Control size: `mini` \| `small` \| `default` \| `large` \| `extra_large`. |
+| `disabled` | Disables the control.                                                     |
+| `on-press` | Dispatch a Msg on press.                                                  |

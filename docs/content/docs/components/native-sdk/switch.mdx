@@ -1,0 +1,36 @@
+---
+title: Switch
+description: A toggle switch with smooth animation.
+---
+
+<ComponentPreview component="switch" />
+
+## Definition
+
+A macOS toggle switch with smooth animation. The caption sits to the left of the toggle, as in System Settings. Respects `prefers-reduced-motion`.
+
+## Markup
+
+```xml
+<switch checked="true" on-change="toggle_wifi">Wi-Fi</switch>
+<switch disabled="true">Locked</switch>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.switch, .{
+    .text = "Wi-Fi",
+    .checked = true,
+    .on_change = .toggle_wifi,
+}, .{})
+```
+
+## Attributes
+
+| Attribute   | Description                                    |
+| ----------- | ---------------------------------------------- |
+| `text`      | Label text; a literal or one `{binding}`.      |
+| `checked`   | Toggle state; `true`/`false` or a `{binding}`. |
+| `disabled`  | Disables the control.                          |
+| `on-change` | Dispatch a Msg when state changes.             |

@@ -1,0 +1,38 @@
+---
+title: Segmented Control
+description: A segmented control for switching between views.
+---
+
+<ComponentPreview component="segmented-control" />
+
+## Definition
+
+A segmented control for switching between views. Each segment can be individually selected, sized, and disabled.
+
+## Markup
+
+```xml
+<segmented-control value="{view}" on-change="set_view">
+  <segment value="list" selected="true">List</segment>
+  <segment value="grid">Grid</segment>
+  <segment value="columns">Columns</segment>
+</segmented-control>
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.segmented_control, .{ .value = "list", .on_change = .set_view }, .{
+    ui.el(.segment, .{ .value = "list", .text = "List", .selected = true }, .{}),
+    ui.el(.segment, .{ .value = "grid", .text = "Grid" }, .{}),
+    ui.el(.segment, .{ .value = "columns", .text = "Columns" }, .{}),
+})
+```
+
+## Attributes
+
+| Attribute   | Description                            |
+| ----------- | -------------------------------------- |
+| `value`     | Currently selected segment value.      |
+| `disabled`  | Disables the control.                  |
+| `on-change` | Dispatch a Msg when selection changes. |

@@ -1,0 +1,34 @@
+---
+title: Stepper
+description: An increment/decrement control with up and down chevrons.
+---
+
+<ComponentPreview component="stepper" />
+
+## Definition
+
+An increment/decrement control with up and down chevron buttons. Available in all five macOS control sizes.
+
+## Markup
+
+```xml
+<stepper on-increment="inc" on-decrement="dec" />
+<stepper disabled="true" />
+```
+
+## Programmatic construction (Zig)
+
+```zig
+ui.el(.stepper, .{
+    .on_increment = .inc,
+    .on_decrement = .dec,
+}, .{})
+```
+
+## Attributes
+
+| Attribute      | Description                        |
+| -------------- | ---------------------------------- |
+| `disabled`     | Disables the control.              |
+| `on-increment` | Dispatch a Msg on increment press. |
+| `on-decrement` | Dispatch a Msg on decrement press. |
