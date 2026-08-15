@@ -20,8 +20,8 @@ export const SITE = {
     TWITTER: "@alaymanguy",
   },
   DESCRIPTION: {
-    LONG: "Ready to use, customizable macOS UI components for GPUI and Native SDK. AppKit metrics, light and dark appearances, and a system accent.",
-    SHORT: "Beautiful Mac UIs, made simple",
+    LONG: "A collection of beautifully designed, accessible, and customizable macOS UI components. Built on GPUI and Native SDK. Copy-paste ready.",
+    SHORT: "Beautiful macOS UIs, made simple",
   },
   KEYWORDS: [
     "gpui",

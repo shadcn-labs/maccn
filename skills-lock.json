@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "gpui": {
+      "source": "longbridge/gpui-component",
+      "sourceType": "github",
+      "skillPath": "skills/gpui/SKILL.md",
+      "computedHash": "9cd5f4cfa1eb49f5b17e7b209010420f2caf97c4ca93f79910bb449a5a988a1b"
+    },
     "launch-shadcn-registry": {
       "source": "shadcn-labs/skills",
       "sourceType": "github",
