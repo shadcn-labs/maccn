@@ -77,7 +77,7 @@ export const findBaseFolder = (
 
 export const getCurrentBase = (pathname: string): string => {
   const baseScopedMatch = pathname.match(
-    /\/docs\/(?:components|gpui|native-sdk)\/([^/]+)(?:\/|$)/
+    /\/docs\/(?:components|gpui)\/([^/]+)(?:\/|$)/
   );
   if (baseScopedMatch) {
     return baseScopedMatch[1];

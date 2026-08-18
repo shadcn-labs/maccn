@@ -23,6 +23,11 @@ const nextConfig = {
   redirects() {
     return [
       {
+        destination: ROUTES.DOCS,
+        permanent: true,
+        source: "/docs/installation",
+      },
+      {
         destination: `${ROUTES.DOCS}.md`,
         permanent: true,
         source: `${ROUTES.DOCS}.mdx`,

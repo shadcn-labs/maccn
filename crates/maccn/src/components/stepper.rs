@@ -9,17 +9,17 @@ use gpui::{
 };
 use gpui_base::Button as BaseButton;
 
-use crate::{MacControlSize, chevron_down, chevron_up, control_height, field_radius, theme::ThemeExt as _};
+use crate::{MacControlSize, control_height, field_radius, stepper_chevron_down, stepper_chevron_up, theme::ThemeExt as _};
 
 type StepHandler = Rc<dyn Fn(&mut Window, &mut App)>;
 
-fn geometry(size: MacControlSize) -> (f32, f32, f32) {
+fn geometry(size: MacControlSize) -> (f32, f32, f32, f32) {
     match size {
-        MacControlSize::ExtraLarge => (30., 20., 6.),
-        MacControlSize::Large => (23., 15., 6.),
-        MacControlSize::Regular => (20., 14., 6.),
-        MacControlSize::Small => (17., 11., 4.6),
-        MacControlSize::Mini => (13., 9., 3.8),
+        MacControlSize::ExtraLarge => (30., 20., 10.6, 6.),
+        MacControlSize::Large => (23., 15., 10.6, 6.),
+        MacControlSize::Regular => (20., 14., 10.6, 6.),
+        MacControlSize::Small => (17., 11., 8., 4.6),
+        MacControlSize::Mini => (13., 9., 6.8, 3.8),
     }
 }
 
@@ -105,14 +105,7 @@ impl RenderOnce for MacStepper {
         let size = self.size;
         let disabled = self.disabled;
         let height = control_height(size);
-        let (width, _separator_width, chevron) = geometry(size);
-        let separator_height = match size {
-            MacControlSize::ExtraLarge => 20.,
-            MacControlSize::Large => 18.,
-            MacControlSize::Regular => 14.,
-            MacControlSize::Small => 12.,
-            MacControlSize::Mini => 10.,
-        };
+        let (width, separator_width, chevron_w, chevron_h) = geometry(size);
         let on_increment = self.on_increment;
         let on_decrement = self.on_decrement;
 
@@ -129,12 +122,13 @@ impl RenderOnce for MacStepper {
             .flex()
             .items_center()
             .justify_center()
+            .w_full()
             .h_full()
             .when_some(on_increment, |button, handler| {
                 button.on_click(move |_: &ClickEvent, window, cx| handler(window, cx))
             })
             .active(|style| style.bg(theme.control_pressed))
-            .child(chevron_up(chevron_color, chevron));
+            .child(stepper_chevron_up(chevron_color, chevron_w, chevron_h));
 
         let down = BaseButton::new((self.id.clone(), "decrement"))
             .disabled(disabled)
@@ -143,28 +137,31 @@ impl RenderOnce for MacStepper {
             .flex()
             .items_center()
             .justify_center()
+            .w_full()
             .h_full()
             .when_some(on_decrement, |button, handler| {
                 button.on_click(move |_: &ClickEvent, window, cx| handler(window, cx))
             })
             .active(|style| style.bg(theme.control_pressed))
-            .child(chevron_down(chevron_color, chevron));
+            .child(stepper_chevron_down(chevron_color, chevron_w, chevron_h));
 
         self.inner
             .flex()
             .flex_none()
+            .flex_col()
             .items_center()
-            .h(px(height))
             .w(px(width))
+            .h(px(height))
             .rounded(px(field_radius(size)))
+            .overflow_hidden()
             .bg(theme.control)
             .when(disabled, |this| this.bg(theme.control_disabled))
             .child(up)
             .child(
                 div()
                     .flex_none()
-                    .w(px(1.))
-                    .h(px(separator_height))
+                    .w(px(separator_width))
+                    .h(px(1.))
                     .bg(theme.separator_vibrant),
             )
             .child(down)

@@ -3,57 +3,33 @@ title: Radio Group
 description: A group of mutually exclusive radio buttons.
 ---
 
-<ComponentPreview component="radio-group" />
-
-## Definition
-
-A group of mutually exclusive radio buttons (`NSRadioButton`). Supports vertical and horizontal layouts with configurable spacing.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="radio-group/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacRadioGroup, MacRadio, RadioAxis};
+use gpui::Axis;
+use maccn::{MacRadio, MacRadioGroup, MacControlSize};
 
 MacRadioGroup::new("options")
-    .axis(RadioAxis::Vertical)
-    .gap(8)
-    .children(vec![
-        MacRadio::new("opt1").checked(true).child("Option 1"),
-        MacRadio::new("opt2").child("Option 2"),
-        MacRadio::new("opt3").child("Option 3"),
-    ])
-    .on_change(|value, _, _, cx| {
-        println!("Selected: {}", value);
-    })
+    .axis(Axis::Vertical)
+    .gap(8.)
+    .child(MacRadio::new("opt1").checked(true).child("Option 1"))
+    .child(MacRadio::new("opt2").child("Option 2"))
+    .child(MacRadio::new("opt3").child("Option 3"));
 ```
 
-### Horizontal
+## Horizontal
 
-```rust
-MacRadioGroup::new("h-options")
-    .axis(RadioAxis::Horizontal)
-    .children(vec![
-        MacRadio::new("h1").checked(true).child("Yes"),
-        MacRadio::new("h2").child("No"),
-    ])
-```
+<ComponentPreview name="radio-group/Horizontal" />
 
-### Sizes
+## Sizes
 
-```rust
-MacRadio::new("xl").size(MacControlSize::ExtraLarge)
-MacRadio::new("l").size(MacControlSize::Large)
-MacRadio::new("r") // Regular (default)
-MacRadio::new("s").size(MacControlSize::Small)
-MacRadio::new("m").size(MacControlSize::Mini)
-```
+<ComponentPreview name="radio-group/Sizes" />
+
+## Disabled
+
+<ComponentPreview name="radio-group/Disabled" />
 
 ## API
 
@@ -62,8 +38,8 @@ MacRadio::new("m").size(MacControlSize::Mini)
 | Prop   | Type             | Default    |
 | ------ | ---------------- | ---------- |
 | `size` | `MacControlSize` | `Regular`  |
-| `axis` | `RadioAxis`      | `Vertical` |
-| `gap`  | `f32`            | `0.0`      |
+| `axis` | `Axis`           | `Vertical` |
+| `gap`  | `f32`            | `8.0`      |
 
 ### MacRadio Props
 

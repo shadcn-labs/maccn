@@ -1,0 +1,56 @@
+---
+title: Theme
+description: Use MaccnTheme to drive light, dark, and accent colors.
+---
+
+## Accessing the theme
+
+Import the [`ThemeExt`](https://docs.rs/maccn/latest/maccn/theme/trait.ThemeExt.html) trait to call `cx.theme()` from any `App` or `Context`:
+
+```rust
+use maccn::theme::ThemeExt as _;
+
+let theme = cx.theme();
+let label = theme.label;
+let accent = theme.accent;
+```
+
+## Light and dark appearances
+
+`MaccnTheme::light()` and `MaccnTheme::dark()` return the full palette for each appearance. Set the global theme during startup or when the system appearance changes:
+
+```rust
+use maccn::{MaccnAppearance, MaccnTheme};
+
+let is_dark = true;
+cx.set_global(match is_dark {
+    true => MaccnTheme::dark(),
+    false => MaccnTheme::light(),
+});
+```
+
+## Accent color
+
+The theme stores one accent color that tints every selected control. maccn ships a small palette in [`maccn::theme::accent`](https://docs.rs/maccn/latest/maccn/theme/accent/index.html):
+
+```rust
+use maccn::theme::accent;
+use maccn::MaccnTheme;
+
+let mut theme = MaccnTheme::light();
+theme.accent = accent::PURPLE;
+cx.set_global(theme);
+```
+
+## Available tokens
+
+`MaccnTheme` exposes semantic colors such as:
+
+- `label`, `label_secondary`, `label_tertiary`, `label_disabled`
+- `window_bg`, `content_bg`, `control_bg`, `group_box`
+- `control`, `control_pressed`, `control_disabled`
+- `accent`, `accent_pressed`, `accent_disabled`, `focus_ring`
+- `separator`, `border_control`
+- `destructive`, `destructive_bg`
+
+Use these tokens in your own views to stay consistent with the built-in components.

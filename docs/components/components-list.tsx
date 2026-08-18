@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 
 import { isComponentsFolder } from "@/lib/docs";
@@ -13,14 +12,6 @@ import {
 import { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 
-const ComponentPreviewLive = dynamic(
-  async () => {
-    const mod = await import("@/components/component-preview-live");
-    return mod.ComponentPreviewLive;
-  },
-  { ssr: false }
-);
-
 const componentsFolder = source.pageTree.children.find(
   (node): node is PageTreeFolder =>
     node.type === "folder" && isComponentsFolder(node)
@@ -28,10 +19,8 @@ const componentsFolder = source.pageTree.children.find(
 
 const ComponentCard = ({
   component,
-  base,
 }: {
   component: PageTreePage;
-  base: string;
 }) => {
   const name = getComponentNameFromUrl(component.url);
   const title = String(component.name);
@@ -43,16 +32,12 @@ const ComponentCard = ({
       key={component.$id ?? component.url}
     >
       <div className="flex h-[140px] items-center justify-center overflow-hidden rounded-md border bg-muted/50">
-        {base === "gpui" ? (
-          <iframe
-            src={`/examples?component=${encodeURIComponent(name)}`}
-            title={`${name} preview`}
-            className="h-full w-full border-none"
-            allow="cross-origin-isolated"
-          />
-        ) : (
-          <ComponentPreviewLive name={name} height={120} />
-        )}
+        <iframe
+          src={`/examples?component=${encodeURIComponent(name)}&mode=card`}
+          title={`${name} preview`}
+          className="h-full w-full border-none"
+          allow="cross-origin-isolated"
+        />
       </div>
       <div className="p-2 pb-1 text-base font-medium underline-offset-4 group-hover:underline">
         {title}
@@ -63,16 +48,14 @@ const ComponentCard = ({
 
 const ComponentCardGrid = ({
   components,
-  base,
   className,
 }: {
   components: PageTreePage[];
-  base: string;
   className?: string;
 }) => (
   <div className={cn("grid gap-4 sm:grid-cols-2", className)}>
     {components.map((component) => (
-      <ComponentCard component={component} base={base} key={component.$id} />
+      <ComponentCard component={component} key={component.$id} />
     ))}
   </div>
 );
@@ -100,13 +83,7 @@ export const ComponentsList = ({
     }
 
     const components = getPagesFromFolderWithoutIndex(categoryFolder);
-    return (
-      <ComponentCardGrid
-        components={components}
-        base={category}
-        className={className}
-      />
-    );
+    return <ComponentCardGrid components={components} className={className} />;
   }
 
   // Show GPUI components by default
@@ -116,13 +93,7 @@ export const ComponentsList = ({
 
   if (gpuiFolder) {
     const components = getPagesFromFolderWithoutIndex(gpuiFolder);
-    return (
-      <ComponentCardGrid
-        components={components}
-        base="gpui"
-        className={className}
-      />
-    );
+    return <ComponentCardGrid components={components} className={className} />;
   }
 
   return null;

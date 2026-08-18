@@ -3,18 +3,7 @@ title: Glass Panel
 description: A translucent panel with blur and vibrancy effects.
 ---
 
-<ComponentPreview component="glass-panel" />
-
-## Definition
-
-A translucent panel with macOS vibrancy effects. Two material options: `Regular` (70%/32% opacity for light/dark) and `Clear` (28%/12% opacity).
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="glass-panel/Basic" />
 
 ## Usage
 
@@ -22,16 +11,8 @@ maccn = "0.1"
 use maccn::{MacGlassPanel, GlassMaterial};
 
 MacGlassPanel::new("panel")
-    .material(GlassMaterial::Regular)
-    .child("Content here")
-```
-
-### Clear Material
-
-```rust
-MacGlassPanel::new("clear-panel")
     .material(GlassMaterial::Clear)
-    .child("Lighter blur")
+    .child("Media controls");
 ```
 
 ## API
@@ -44,10 +25,10 @@ MacGlassPanel::new("clear-panel")
 
 ### Materials
 
-| Material  | Description                                          |
-| --------- | ---------------------------------------------------- |
-| `Regular` | 70% opacity (light) / 32% (dark). Standard vibrancy. |
-| `Clear`   | 28% opacity (light) / 12% (dark). Lighter blur.      |
+| Material  | Description            |
+| --------- | ---------------------- |
+| `Regular` | Stronger opacity tint. |
+| `Clear`   | Lighter opacity tint.  |
 
 ### Traits
 

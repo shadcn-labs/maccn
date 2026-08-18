@@ -5,9 +5,9 @@
 //! `crates/base/examples/showcase`.
 
 use gpui::{
-    App, AppContext as _, Application, Context, Entity, InteractiveElement as _, IntoElement,
-    ParentElement as _, Render, ScrollHandle, StatefulInteractiveElement as _, Styled as _, Window,
-    WindowOptions, actions, div, prelude::FluentBuilder as _, px,
+    App, AppContext as _, Application, Context, Entity, InteractiveElement as _,
+    IntoElement, ParentElement as _, Render, ScrollHandle, StatefulInteractiveElement as _,
+    Styled as _, Window, WindowOptions, actions, div, prelude::FluentBuilder as _, px,
 };
 #[cfg(not(target_family = "wasm"))]
 use gpui::size;
@@ -23,33 +23,35 @@ mod components;
 actions!(maccn_showcase, [Quit]);
 
 pub const COMPONENTS: &[&str] = &[
-    "badge",
-    "box",
     "button",
     "checkbox",
-    "glass-panel",
-    "help-button",
-    "label",
+    "radio-group",
+    "switch",
+    "segmented-control",
     "pop-up-button",
     "progress",
-    "radio-group",
-    "search-field",
-    "secure-field",
-    "segmented-control",
-    "separator",
-    "slider",
     "spinner",
+    "slider",
     "stepper",
-    "switch",
+    "label",
+    "badge",
+    "box",
+    "separator",
+    "glass-panel",
+    "help-button",
     "text-field",
+    "secure-field",
+    "search-field",
 ];
 
 pub struct Showcase {
     component: String,
+    card_mode: bool,
     navigation_enabled: bool,
     checkbox_checked: bool,
     radio_selected: usize,
     switch_checked: bool,
+    box_bluetooth_checked: bool,
     toggle_checked: bool,
     segmented_index: usize,
     stepper_value: i32,
@@ -60,6 +62,8 @@ pub struct Showcase {
     input: Entity<InputState>,
     secure_input: Entity<InputState>,
     search_input: Entity<InputState>,
+    stepper_input: Entity<InputState>,
+    segmented_multiple: Vec<usize>,
     scroll: ScrollHandle,
 }
 
@@ -90,7 +94,7 @@ fn prefers_color_scheme_dark_media_query() -> &'static str {
 }
 
 impl Showcase {
-    pub fn new(component: impl Into<String>, window: &mut Window, cx: &mut Context<Self>) -> Self {
+    pub fn new(component: impl Into<String>, card_mode: bool, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let component = component.into();
 
         // Auto-detect system theme on WASM
@@ -115,13 +119,13 @@ impl Showcase {
 
         let input = cx.new(|cx| {
             InputState::new(window, cx)
-                .placeholder("Placeholder text")
+                .placeholder("Server name")
                 .default_value("")
         });
         let secure_input = cx.new(|cx| {
             InputState::new(window, cx)
-                .placeholder("Password")
-                .default_value("hunter2")
+                .placeholder("Passphrase")
+                .default_value("")
                 .masked(true)
         });
         let search_input = cx.new(|cx| {
@@ -129,23 +133,37 @@ impl Showcase {
                 .placeholder("Search")
                 .default_value("")
         });
-        for state in [&input, &secure_input, &search_input] {
+        let stepper_input = cx.new(|cx| {
+            InputState::new(window, cx)
+                .placeholder("Copies")
+                .default_value("1")
+        });
+        for state in [&input, &secure_input, &search_input, &stepper_input] {
             cx.subscribe(state, |_, _, _: &InputEvent, cx| cx.notify())
                 .detach();
         }
+        cx.subscribe(&stepper_input, |this, _, _: &InputEvent, cx| {
+            if let Ok(value) = this.stepper_input.read(cx).value().parse::<i32>() {
+                this.stepper_value = value.clamp(0, 99);
+            }
+            cx.notify();
+        })
+        .detach();
 
-        let slider = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(64.));
+        let slider = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(50.));
         cx.observe(&slider, |_, _, cx| cx.notify()).detach();
 
         Self {
-            navigation_enabled: component == "overview",
+            navigation_enabled: component == "overview" && !card_mode,
+            card_mode,
             component,
             checkbox_checked: true,
             radio_selected: 0,
             switch_checked: true,
+            box_bluetooth_checked: false,
             toggle_checked: true,
             segmented_index: 0,
-            stepper_value: 0,
+            stepper_value: 1,
             popup_selected: None,
             popup_open: false,
             progress_value: 0.68,
@@ -153,6 +171,8 @@ impl Showcase {
             input,
             secure_input,
             search_input,
+            stepper_input,
+            segmented_multiple: vec![0],
             scroll: ScrollHandle::new(),
         }
     }
@@ -219,32 +239,53 @@ impl Showcase {
 impl Render for Showcase {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let theme = cx.theme();
-        let content = match self.component.as_str() {
-            "badge" => self.badge().into_any_element(),
-            "box" => self.box_example().into_any_element(),
-            "button" => self.button().into_any_element(),
-            "checkbox" => self.checkbox(cx).into_any_element(),
-            "glass-panel" => self.glass_panel().into_any_element(),
-            "help-button" => self.help_button().into_any_element(),
-            "label" => self.label().into_any_element(),
-            "pop-up-button" => self.pop_up_button(cx).into_any_element(),
-            "progress" => self.progress().into_any_element(),
-            "radio-group" => self.radio_group(cx).into_any_element(),
-            "search-field" => self.search_field().into_any_element(),
-            "secure-field" => self.secure_field().into_any_element(),
-            "segmented-control" => self.segmented(cx).into_any_element(),
-            "separator" => self.separator().into_any_element(),
-            "slider" => self.slider(cx).into_any_element(),
-            "spinner" => self.spinner().into_any_element(),
-            "stepper" => self.stepper(cx).into_any_element(),
-            "switch" => self.switch(cx).into_any_element(),
-            "text-field" => self.text_field().into_any_element(),
-            _ => self.overview(cx).into_any_element(),
+
+        if self.card_mode {
+            let content = self.card_content(cx);
+            return div()
+                .size_full()
+                .flex()
+                .items_center()
+                .justify_center()
+                .bg(theme.window_bg)
+                .text_color(theme.label)
+                .text_xs()
+                .font_family("Inter")
+                .child(content)
+                .into_any_element();
+        }
+
+        let content = if let Some((component, variant)) = self.component.split_once('/') {
+            self.variant(component, variant, cx)
+        } else {
+            match self.component.as_str() {
+                "badge" => self.badge().into_any_element(),
+                "box" => self.box_example(cx).into_any_element(),
+                "button" => self.button().into_any_element(),
+                "checkbox" => self.checkbox(cx).into_any_element(),
+                "glass-panel" => self.glass_panel().into_any_element(),
+                "help-button" => self.help_button().into_any_element(),
+                "label" => self.label().into_any_element(),
+                "pop-up-button" => self.pop_up_button(cx).into_any_element(),
+                "progress" => self.progress().into_any_element(),
+                "radio-group" => self.radio_group(cx).into_any_element(),
+                "search-field" => self.search_field().into_any_element(),
+                "secure-field" => self.secure_field().into_any_element(),
+                "segmented-control" => self.segmented(cx).into_any_element(),
+                "separator" => self.separator().into_any_element(),
+                "slider" => self.slider(cx).into_any_element(),
+                "spinner" => self.spinner().into_any_element(),
+                "stepper" => self.stepper(cx).into_any_element(),
+                "switch" => self.switch(cx).into_any_element(),
+                "text-field" => self.text_field().into_any_element(),
+                _ => self.overview(cx).into_any_element(),
+            }
         };
 
         let is_overview = self.component == "overview";
 
         div()
+            .id("showcase-root")
             .size_full()
             .flex()
             .flex_col()
@@ -252,6 +293,7 @@ impl Render for Showcase {
             .text_color(theme.label)
             .text_xs()
             .font_family("Inter")
+            .on_click(move |_, window, _cx| window.blur())
             // Header bar — only shown in overview mode (native)
             .when(is_overview, |this| {
                 this.child(
@@ -295,6 +337,7 @@ impl Render for Showcase {
                             .child(div().flex_none().child(content)),
                     ),
             )
+            .into_any_element()
     }
 }
 
@@ -328,7 +371,7 @@ pub fn run(app: Application, component: impl Into<String>) {
             ..WindowOptions::default()
         };
         cx.open_window(options, move |window, cx| {
-            cx.new(|cx| Showcase::new(component, window, cx))
+            cx.new(|cx| Showcase::new(component, false, window, cx))
         })
         .expect("failed to open maccn example window");
         cx.activate(true);
@@ -336,7 +379,7 @@ pub fn run(app: Application, component: impl Into<String>) {
 }
 
 #[cfg(target_family = "wasm")]
-pub fn run_embedded(app: Application, component: impl Into<String>) -> gpui::ApplicationHandle {
+pub fn run_embedded(app: Application, component: impl Into<String>, card_mode: bool) -> gpui::ApplicationHandle {
     let component = component.into();
     app.run_embedded(move |cx: &mut App| {
         maccn::init(cx);
@@ -348,7 +391,7 @@ pub fn run_embedded(app: Application, component: impl Into<String>) -> gpui::App
             )])
             .expect("failed to load maccn example font");
         cx.open_window(WindowOptions::default(), move |window, cx| {
-            cx.new(|cx| Showcase::new(component, window, cx))
+            cx.new(|cx| Showcase::new(component, card_mode, window, cx))
         })
         .expect("failed to open maccn example window");
         cx.activate(true);

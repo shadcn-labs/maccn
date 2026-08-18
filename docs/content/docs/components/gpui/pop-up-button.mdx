@@ -1,20 +1,9 @@
 ---
 title: Pop-Up Button
-description: A dropdown button that opens a popover menu.
+description: A dropdown button that opens a menu of selectable items.
 ---
 
-<ComponentPreview component="pop-up-button" />
-
-## Definition
-
-A dropdown button (`NSPopUpButton`) that opens a popover menu. Supports items, separators, disabled states, and selection tracking.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="pop-up-button/Basic" />
 
 ## Usage
 
@@ -22,43 +11,47 @@ maccn = "0.1"
 use maccn::{MacPopUpButton, MacPopUpButtonItem};
 
 MacPopUpButton::new("format")
+    .placeholder("Choose format")
     .items(vec![
         MacPopUpButtonItem::new("PDF"),
         MacPopUpButtonItem::new("PNG"),
         MacPopUpButtonItem::separator(),
         MacPopUpButtonItem::new("Custom").disabled(true),
     ])
-    .selected("PDF")
-    .on_change(|value, _, _, cx| {
-        println!("Selected: {}", value);
-    })
+    .selected(Some(0));
 ```
 
-### Sizes
+## Sizes
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="pop-up-button/Sizes" />
 
-```rust
-MacPopUpButton::new("xl").size(MacControlSize::ExtraLarge)
-MacPopUpButton::new("l").size(MacControlSize::Large)
-MacPopUpButton::new("r") // Regular (default)
-MacPopUpButton::new("s").size(MacControlSize::Small)
-MacPopUpButton::new("m").size(MacControlSize::Mini)
-```
+## States
+
+<ComponentPreview name="pop-up-button/States" />
 
 ## API
 
-### Props
+### MacPopUpButton Props
 
 | Prop          | Type             | Default   |
 | ------------- | ---------------- | --------- |
 | `size`        | `MacControlSize` | `Regular` |
-| `selected`    | `Option<&str>`   | `None`    |
-| `placeholder` | `Option<&str>`   | `None`    |
+| `selected`    | `Option<usize>`  | `None`    |
+| `placeholder` | `SharedString`   | `"Select"`|
 | `disabled`    | `bool`           | `false`   |
 
-### Events
+### MacPopUpButton Methods
 
-| Event       | Payload                                      |
-| ----------- | -------------------------------------------- |
-| `on_change` | `(&str, &ClickEvent, &mut Window, &mut App)` |
+| Method                                        | Description                    |
+| --------------------------------------------- | ------------------------------ |
+| `item(MacPopUpButtonItem)`                    | Appends a single item.         |
+| `items(impl IntoIterator<Item = MacPopUpButtonItem>)` | Replaces all items.    |
+
+### MacPopUpButtonItem
+
+| Method                                              | Description                              |
+| --------------------------------------------------- | ---------------------------------------- |
+| `new(label: impl Into<SharedString>)`               | Creates a selectable item.               |
+| `disabled(bool)`                                    | Disables the item.                       |
+| `on_select(handler: Fn(&mut Window, &mut App))`     | Called when the item is selected.        |
+| `separator()`                                       | Creates a menu separator.                |

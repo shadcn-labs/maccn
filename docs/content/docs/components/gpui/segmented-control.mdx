@@ -3,50 +3,30 @@ title: Segmented Control
 description: A segmented control for switching between views.
 ---
 
-<ComponentPreview component="segmented-control" />
-
-## Definition
-
-A segmented control (`NSSegmentedControl`) for switching between views. Each segment can be individually selected, sized, and disabled.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="segmented-control/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacSegmentedControl, MacSegment};
+use maccn::{MacSegment, MacSegmentedControl};
 
 MacSegmentedControl::new("view-toggle")
-    .segments(vec![
-        MacSegment::new("list").selected(true).child("List"),
-        MacSegment::new("grid").child("Grid"),
-        MacSegment::new("columns").child("Columns"),
-    ])
-    .on_click(|segment, _, _, cx| {
-        println!("Selected: {}", segment);
-    })
+    .child(MacSegment::new("list").selected(true).child("List"))
+    .child(MacSegment::new("grid").child("Grid"))
+    .child(MacSegment::new("columns").child("Columns"));
 ```
 
-### Sizes
+## Multiple
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="segmented-control/Multiple" />
 
-```rust
-MacSegmentedControl::new("xl")
-    .size(MacControlSize::ExtraLarge)
-    .segments(vec![...])
-```
+## Sizes
 
-### Disabled
+<ComponentPreview name="segmented-control/Sizes" />
 
-```rust
-MacSegmentedControl::new("sc").disabled(true)
-```
+## Disabled
+
+<ComponentPreview name="segmented-control/Disabled" />
 
 ## API
 

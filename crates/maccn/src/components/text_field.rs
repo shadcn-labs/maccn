@@ -8,7 +8,7 @@ use gpui::{
 use gpui_base::{Input, InputBase, StyledExt as _, input::InputState};
 
 use crate::{
-    MacControlSize, close_x, control_height, field_radius, focus_ring_shadow, magnifier,
+    MacControlSize, close_x, control_height, field_focus_ring_shadow, field_radius, magnifier,
     theme::ThemeExt as _,
 };
 
@@ -123,7 +123,10 @@ impl MacTextField {
                     .focused(|style| {
                         style
                             .border_color(theme.focus_ring_border)
-                            .shadow(focus_ring_shadow(theme.focus_ring))
+                            .shadow(field_focus_ring_shadow(
+                                theme.focus_ring_border,
+                                theme.focus_ring,
+                            ))
                     })
                     .disabled(|style| style.bg(theme.control_bg_disabled))
             })

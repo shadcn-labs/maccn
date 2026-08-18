@@ -27,13 +27,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Kbd } from "@/components/ui/kbd";
-import { Separator } from "@/components/ui/separator";
-import { SITE } from "@/constants/site";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { useFeedback } from "@/hooks/use-feedback";
 import { useIsMac } from "@/hooks/use-is-mac";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
-import { usePackageManager } from "@/hooks/use-package-manager";
 import { trackEvent } from "@/lib/events";
 import { getCurrentBase, getTreeGroups } from "@/lib/page-tree";
 import { cn } from "@/lib/utils";
@@ -125,23 +120,9 @@ export const CommandMenu = ({
   const router = useRouter();
   const pathname = usePathname();
   const isMac = useIsMac();
-  const [packageManager] = usePackageManager();
   const [open, setOpen] = useState(false);
   const [showGoToPage, setShowGoToPage] = useState(false);
-  const [copyPayload, setCopyPayload] = useState("");
   const currentBase = getCurrentBase(pathname);
-  const copyFeedback = useFeedback({ sound: "copy" });
-
-  const { copyToClipboard } = useCopyToClipboard({
-    onCopy: () => {
-      if (copyPayload) {
-        trackEvent({
-          name: "copy_npm_command",
-          properties: { command: copyPayload, pm: packageManager },
-        });
-      }
-    },
-  });
 
   const treeGroups = useMemo(
     () => getTreeGroups(tree, currentBase),
@@ -151,16 +132,8 @@ export const CommandMenu = ({
   const handleDocPageHighlight = useCallback(
     (item: { url: string; name?: string }) => {
       setShowGoToPage(true);
-      const parsed = parseDocPageUrl(item.url);
-      if (parsed.kind === "component") {
-        setCopyPayload(
-          `${packageManager} dlx shadcn@latest add ${SITE.REGISTRY}/${parsed.slug}`
-        );
-        return;
-      }
-      setCopyPayload("");
     },
-    [packageManager]
+    []
   );
 
   const runCommand = useCallback((command: () => unknown) => {
@@ -229,21 +202,11 @@ export const CommandMenu = ({
         });
       }
 
-      if (
-        e.key === "c" &&
-        (e.metaKey || e.ctrlKey) &&
-        copyPayload.includes("shadcn@latest")
-      ) {
-        runCommand(() => {
-          copyFeedback();
-          copyToClipboard(copyPayload);
-        });
-      }
     };
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [copyPayload, runCommand, copyToClipboard, copyFeedback]);
+  }, [runCommand]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen} sounds>
@@ -290,7 +253,6 @@ export const CommandMenu = ({
                     keywords={["nav", "navigation", item.label.toLowerCase()]}
                     onHighlight={() => {
                       setShowGoToPage(true);
-                      setCopyPayload("");
                     }}
                     onSelect={() => runCommand(() => router.push(item.href))}
                   >
@@ -328,16 +290,6 @@ export const CommandMenu = ({
               <span className="min-w-0 truncate">Go to Page</span>
             ) : null}
           </div>
-          {copyPayload && (
-            <>
-              <Separator orientation="vertical" className="h-4!" />
-              <div className="flex min-w-0 items-center gap-1">
-                <Kbd className="shrink-0">{isMac ? "⌘" : "Ctrl"}</Kbd>
-                <Kbd className="shrink-0">C</Kbd>
-                <span className="min-w-0 truncate">{copyPayload}</span>
-              </div>
-            </>
-          )}
         </div>
       </DialogContent>
     </Dialog>

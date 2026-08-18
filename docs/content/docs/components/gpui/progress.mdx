@@ -3,46 +3,41 @@ title: Progress
 description: A horizontal progress bar with determinate and indeterminate modes.
 ---
 
-<ComponentPreview component="progress" />
-
-## Definition
-
-A horizontal progress bar (`NSProgressIndicator`) with determinate and indeterminate modes. Two sizes: `Regular` (10px) and `Small` (6px).
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="progress/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::MacProgress;
+use maccn::{MacProgress, ProgressSize};
 
 // Determinate
-MacProgress::new("upload")
-    .value(0.6)
+MacProgress::new("upload").value(40.);
 
 // Indeterminate
-MacProgress::new("loading")
-    .indeterminate(true)
+MacProgress::new("loading").indeterminate(true);
 ```
 
-### Sizes
+## Indeterminate
 
-```rust
-MacProgress::new("r") // Regular (default, 10px)
-MacProgress::new("s").size(MacControlSize::Small) // Small (6px)
-```
+<ComponentPreview name="progress/Indeterminate" />
+
+## Sizes
+
+<ComponentPreview name="progress/Sizes" />
 
 ## API
 
 ### Props
 
-| Prop            | Type             | Default   |
-| --------------- | ---------------- | --------- |
-| `size`          | `MacControlSize` | `Regular` |
-| `value`         | `f32`            | `0.0`     |
-| `indeterminate` | `bool`           | `false`   |
+| Prop            | Type          | Default       |
+| --------------- | ------------- | ------------- |
+| `size`          | `ProgressSize`| `Regular`     |
+| `value`         | `f32`         | `0.0`         |
+| `indeterminate` | `bool`        | `false`       |
+
+### ProgressSize
+
+| Variant  | Height |
+| -------- | ------ |
+| `Regular`| 10px   |
+| `Small`  | 6px    |

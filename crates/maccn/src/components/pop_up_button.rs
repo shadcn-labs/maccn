@@ -9,8 +9,8 @@ use gpui::{
 use gpui_base::{Button as BaseButton, Popover, PopoverState};
 
 use crate::{
-    CONTROL_TEXT_WEIGHT, MaccnAppearance, MacControlSize, chevron_down, control_height,
-    control_radius, control_text_size, rgba_f, theme::ThemeExt as _,
+    CONTROL_TEXT_WEIGHT, MaccnAppearance, MacControlSize, control_height, control_radius,
+    control_text_size, menu_check_mark, pop_up_chevron, rgba_f, theme::ThemeExt as _,
 };
 
 type SelectHandler = Rc<dyn Fn(&mut Window, &mut App)>;
@@ -144,12 +144,13 @@ impl RenderOnce for MacPopUpButton {
 
         let id = self.id.clone();
         let items = self.items;
+        let selected = self.selected;
         Popover::new(self.id)
             .anchor(Anchor::BottomLeft)
             .overlay_closable(true)
             .trigger(trigger)
             .content(move |state, window, cx| {
-                menu(id.clone(), size, items.clone(), state, window, cx)
+                menu(id.clone(), size, items.clone(), selected, state, window, cx)
             })
             .into_any_element()
     }
@@ -217,13 +218,14 @@ fn trigger(
                 .text_ellipsis()
                 .child(label),
         )
-        .child(chevron_down(
+        .child(pop_up_chevron(
             if disabled {
                 theme.label_disabled
             } else {
                 theme.label
             },
             7.,
+            12.,
         ))
 }
 
@@ -231,6 +233,7 @@ fn menu(
     id: ElementId,
     size: MacControlSize,
     items: Vec<MacPopUpButtonItem>,
+    selected: Option<usize>,
     _state: &mut PopoverState,
     _window: &mut Window,
     cx: &mut gpui::Context<PopoverState>,
@@ -283,12 +286,15 @@ fn menu(
                     on_select,
                 } => {
                     let entity = entity.clone();
+                    let is_selected = selected == Some(index);
                     BaseButton::new((id.clone(), index.to_string()))
                         .disabled(disabled)
                         .h(px(item_height))
-                        .px(px(10.))
+                        .pl(px(6.))
+                        .pr(px(10.))
                         .flex()
                         .items_center()
+                        .gap(px(4.))
                         .rounded(px(5.))
                         .text_size(px(item_font))
                         .font_weight(CONTROL_TEXT_WEIGHT)
@@ -302,6 +308,17 @@ fn menu(
                                 entity.update(cx, |state, cx| state.set_open(false, cx));
                             })
                         })
+                        .child(
+                            div()
+                                .flex_none()
+                                .w(px(16.))
+                                .flex()
+                                .items_center()
+                                .justify_center()
+                                .when(is_selected, |this| {
+                                    this.child(menu_check_mark(theme.label, 10., 8.))
+                                }),
+                        )
                         .child(label)
                         .into_any_element()
                 }

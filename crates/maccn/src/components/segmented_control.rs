@@ -118,7 +118,10 @@ impl RenderOnce for MacSegment {
             } else {
                 theme.label
             })
-            .when(selected, |this| this.bg(theme.accent))
+            .when(selected, |this| {
+                this.bg(theme.accent)
+                    .rounded(px(control_radius(size)))
+            })
             .active(|style| {
                 style.bg(if selected {
                     theme.segmented_on_pressed

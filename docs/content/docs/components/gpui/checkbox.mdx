@@ -1,57 +1,34 @@
 ---
 title: Checkbox
-description: A tri-state checkbox with check and indeterminate marks.
+description: A macOS checkbox with checked, unchecked, and indeterminate states.
 ---
 
-<ComponentPreview component="checkbox" />
-
-## Definition
-
-A tri-state checkbox (`NSButton` checkbox style) with check and indeterminate marks. Supports `Checked`, `Unchecked`, and `Indeterminate` states.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="checkbox/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacCheckbox, CheckboxState};
+use maccn::{MacCheckbox, MacCheckboxState};
 
 MacCheckbox::new("agree")
     .checked(true)
-    .on_change(|state, _, _, cx| {
+    .on_change(|state, _, _, _| {
         println!("State: {:?}", state);
     })
+    .child("I agree");
 ```
 
-### Indeterminate
+## States
 
-```rust
-MacCheckbox::new("partial")
-    .indeterminate(true)
-```
+<ComponentPreview name="checkbox/States" />
 
-### Sizes
+## Sizes
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="checkbox/Sizes" />
 
-```rust
-MacCheckbox::new("xl").size(MacControlSize::ExtraLarge)
-MacCheckbox::new("l").size(MacControlSize::Large)
-MacCheckbox::new("r") // Regular (default)
-MacCheckbox::new("s").size(MacControlSize::Small)
-MacCheckbox::new("m").size(MacControlSize::Mini)
-```
+## Disabled
 
-### Disabled
-
-```rust
-MacCheckbox::new("cb").disabled(true)
-```
+<ComponentPreview name="checkbox/Disabled" />
 
 ## API
 
@@ -64,8 +41,16 @@ MacCheckbox::new("cb").disabled(true)
 | `indeterminate` | `bool`           | `false`   |
 | `disabled`      | `bool`           | `false`   |
 
+### State
+
+| Method                       | Description                              |
+| ---------------------------- | ---------------------------------------- |
+| `state(MacCheckboxState)`    | Sets the checkbox to any of the states.  |
+| `checked(bool)`              | Shortcut for `Checked` / `Unchecked`.    |
+| `indeterminate(bool)`        | Sets the mixed state when `true`.        |
+
 ### Events
 
-| Event       | Payload                                               |
-| ----------- | ----------------------------------------------------- |
-| `on_change` | `(CheckboxState, &ClickEvent, &mut Window, &mut App)` |
+| Event       | Payload                                                    |
+| ----------- | ---------------------------------------------------------- |
+| `on_change` | `(MacCheckboxState, &ClickEvent, &mut Window, &mut App)`  |

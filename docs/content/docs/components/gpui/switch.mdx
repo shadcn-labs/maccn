@@ -1,20 +1,9 @@
 ---
 title: Switch
-description: A toggle switch with smooth animation.
+description: A macOS toggle switch with smooth animation.
 ---
 
-<ComponentPreview component="switch" />
-
-## Definition
-
-A macOS toggle switch (`NSSwitch`) with smooth animation. The caption sits to the left of the toggle, as in System Settings. Respects `prefers-reduced-motion`.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="switch/Basic" />
 
 ## Usage
 
@@ -23,28 +12,19 @@ use maccn::MacSwitch;
 
 MacSwitch::new("wifi")
     .checked(true)
-    .on_change(|next, _, _, cx| {
+    .on_change(|next, _, _, _| {
         println!("Switched to: {}", next);
     })
+    .child("Wi-Fi");
 ```
 
-### Sizes
+## Sizes
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="switch/Sizes" />
 
-```rust
-MacSwitch::new("xl").size(MacControlSize::ExtraLarge)
-MacSwitch::new("l").size(MacControlSize::Large)
-MacSwitch::new("r") // Regular (default)
-MacSwitch::new("s").size(MacControlSize::Small)
-MacSwitch::new("m").size(MacControlSize::Mini)
-```
+## Disabled
 
-### Disabled
-
-```rust
-MacSwitch::new("sw").disabled(true)
-```
+<ComponentPreview name="switch/Disabled" />
 
 ## API
 

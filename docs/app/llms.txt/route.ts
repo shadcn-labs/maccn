@@ -22,7 +22,7 @@ const docsIndex = (origin: string) => {
 
   return `# ${SITE.NAME}
 
-> ${SITE.DESCRIPTION.LONG} Use this index to discover the available documentation pages, markdown mirrors, and registry resources before browsing.
+> ${SITE.DESCRIPTION.LONG} Use this index to discover the available documentation pages and markdown mirrors before browsing.
 
 ${documentationIndex(base)}
 

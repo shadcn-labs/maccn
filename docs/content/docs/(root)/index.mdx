@@ -1,64 +1,62 @@
 ---
-title: "Introduction"
-description: "macOS-inspired controls for GPUI. Built on gpui-base, works with Rust and WebAssembly."
+title: Installation
+description: Add maccn to your GPUI project.
 ---
 
-**maccn** provides beautifully designed, accessible, and customizable macOS-inspired controls. Built on [GPUI](https://gpui.rs) and [gpui-base](https://github.com/longbridge/gpui-component), and designed to feel native on macOS.
+## System Requirements
 
-## Philosophy
+maccn runs anywhere GPUI runs. Development is supported on macOS, Windows, and Linux.
 
-maccn follows the AppKit design language: every control carries the metrics, states, and keyboard behavior captured by [macvue](https://github.com/antonreshetov/macvue), re-expressed as composable Rust components.
+For the latest platform setup steps, see the [gpui-component repository](https://github.com/longbridge/gpui-component).
 
-Most macOS UI libraries are either too opinionated or too scattered. maccn is built for teams that want to ship quickly without giving up control:
+### macOS
 
-- **Own Your Code:** Copy the components into your project and customize everything.
-- **Start Fast:** Run one command and render your first UI with production-ready defaults.
-- **Choose Your Engine:** Use the same components natively or compile to WebAssembly for the browser.
+- macOS 15 or later
+- Xcode Command Line Tools
 
-## Why maccn?
+### Windows
 
-- **Own Your Code:** Copy the components into your project and customize everything.
-- **Start Fast:** Run one command and render your first UI with production-ready defaults.
-- **Native or WASM:** The same components drive a native app or a WebAssembly demo.
+- Windows 10 or later
+- Follow the [GPUI Windows setup guide](https://gpui.rs) for the required toolchain.
 
-## Features
+### Linux
 
-<div className="not-prose grid gap-4 sm:grid-cols-2 mt-4">
-  <FeatureCard
-    icon={ZapIcon}
-    title="Zero Config"
-    description="Works out of the box with sensible defaults and gpui-base primitives."
-  />
-  <FeatureCard
-    icon={SunMoonIcon}
-    title="Theme Aware"
-    description="Light and dark appearances driven by MaccnTheme, on any element."
-  />
-  <FeatureCard
-    icon={LayoutGridIcon}
-    title="Composable"
-    description="Build interfaces from small declarative components that nest naturally."
-  />
-  <FeatureCard
-    icon={Code2Icon}
-    title="Rust Native"
-    description="Full type safety with idiomatic Rust APIs and GPUI integration."
-  />
-  <FeatureCard
-    icon={ClipboardCopyIcon}
-    title="Copy & Paste"
-    description="Own your UI code. Install it into your project and customize every detail."
-  />
-  <FeatureCard
-    icon={BlocksIcon}
-    title="19 Components"
-    description="Badge, Box, Button, Checkbox, Glass Panel, Label, Progress, Switch, and more."
-  />
-</div>
+- A recent distribution with GTK and fontconfig development packages
+- Follow the [GPUI Linux setup guide](https://gpui.rs) for system dependencies.
 
-import { ZapIcon } from "lucide-react";
-import { SunMoonIcon } from "lucide-react";
-import { LayoutGridIcon } from "lucide-react";
-import { Code2Icon } from "lucide-react";
-import { ClipboardCopyIcon } from "lucide-react";
-import { BlocksIcon } from "lucide-react";
+## Rust and Cargo
+
+maccn is a Rust library. Make sure you have Rust and Cargo installed:
+
+- Rust 1.85 or later
+- Cargo (comes with Rust)
+
+## Add maccn
+
+Add the following dependencies to your `Cargo.toml`:
+
+```toml
+[dependencies]
+maccn = { git = "https://github.com/shadcn-labs/maccn" }
+gpui = { git = "https://github.com/zed-industries/zed" }
+gpui_platform = { git = "https://github.com/zed-industries/zed", features = ["font-kit"] }
+```
+
+## Initialize maccn
+
+Call `maccn::init` inside your application startup closure, before opening any windows:
+
+```rust
+fn main() {
+    gpui_platform::application().run(move |cx: &mut App| {
+        maccn::init(cx);
+
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| HelloWorld)
+        })
+        .expect("Failed to open window");
+    });
+}
+```
+
+This registers the global `MaccnTheme` and `gpui-base` infrastructure. Components will not render correctly without it.

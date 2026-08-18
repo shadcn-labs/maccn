@@ -3,36 +3,29 @@ title: Separator
 description: A horizontal or vertical dividing line.
 ---
 
-<ComponentPreview component="separator" />
-
-## Definition
-
-A 1px dividing line in the theme's separator color. Supports horizontal and vertical orientations.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="separator/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacSeparator, SeparatorAxis};
+use gpui::Axis;
+use maccn::MacSeparator;
 
 // Horizontal (default)
-MacSeparator::new("sep-h")
+MacSeparator::new("sep-h");
 
 // Vertical
-MacSeparator::new("sep-v")
-    .axis(SeparatorAxis::Vertical)
+MacSeparator::new("sep-v").axis(Axis::Vertical);
 ```
+
+## Vertical
+
+<ComponentPreview name="separator/Vertical" />
 
 ## API
 
 ### Props
 
-| Prop   | Type            | Default      |
-| ------ | --------------- | ------------ |
-| `axis` | `SeparatorAxis` | `Horizontal` |
+| Prop   | Type  | Default       |
+| ------ | ----- | ------------- |
+| `axis` | `Axis`| `Horizontal`  |

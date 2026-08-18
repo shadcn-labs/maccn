@@ -30,7 +30,7 @@ const GetStartedButton = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Link href={ROUTES.DOCS_INSTALLATION} transitionTypes={["nav-forward"]}>
+      <Link href={ROUTES.DOCS} transitionTypes={["nav-forward"]}>
         Get Started
         <ArrowRightIcon className="hidden sm:inline" ref={arrowRightRef} />
       </Link>

@@ -3,18 +3,7 @@ title: Label
 description: A text label with macOS typography styles.
 ---
 
-<ComponentPreview component="label" />
-
-## Definition
-
-A text label with macOS typography styles. Supports 11 built-in text styles matching AppKit's `NSTextField` label hierarchy.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="label/Basic" />
 
 ## Usage
 
@@ -23,35 +12,12 @@ use maccn::{MacLabel, LabelStyle};
 
 MacLabel::new("title")
     .style(LabelStyle::Title1)
-    .child("Hello World")
+    .child("Hello World");
 ```
 
-### Styles
+## Variants
 
-All 11 macOS text styles:
-
-```rust
-MacLabel::new("body").style(LabelStyle::Body).child("Body (13px)")
-MacLabel::new("lt").style(LabelStyle::LargeTitle).child("Large Title (26px)")
-MacLabel::new("t1").style(LabelStyle::Title1).child("Title 1 (22px)")
-MacLabel::new("t2").style(LabelStyle::Title2).child("Title 2 (17px)")
-MacLabel::new("t3").style(LabelStyle::Title3).child("Title 3 (15px)")
-MacLabel::new("hl").style(LabelStyle::Headline).child("Headline (13px bold)")
-MacLabel::new("co").style(LabelStyle::Callout).child("Callout (12px)")
-MacLabel::new("sh").style(LabelStyle::Subheadline).child("Subheadline (11px)")
-MacLabel::new("fn").style(LabelStyle::Footnote).child("Footnote (10px)")
-MacLabel::new("c1").style(LabelStyle::Caption1).child("Caption 1 (10px)")
-MacLabel::new("c2").style(LabelStyle::Caption2).child("Caption 2 (10px)")
-```
-
-### Secondary
-
-```rust
-MacLabel::new("label")
-    .style(LabelStyle::Body)
-    .secondary(true)
-    .child("Muted text")
-```
+<ComponentPreview name="label/Variants" />
 
 ## API
 
@@ -61,6 +27,22 @@ MacLabel::new("label")
 | ----------- | ------------ | ------- |
 | `style`     | `LabelStyle` | `Body`  |
 | `secondary` | `bool`       | `false` |
+
+### LabelStyle
+
+| Variant       | Size  | Weight |
+| ------------- | ----- | ------ |
+| `LargeTitle`  | 26px  | Normal |
+| `Title1`      | 22px  | Normal |
+| `Title2`      | 17px  | Normal |
+| `Title3`      | 15px  | Normal |
+| `Headline`    | 13px  | Bold   |
+| `Body`        | 13px  | Normal |
+| `Callout`     | 12px  | Normal |
+| `Subheadline` | 11px  | Normal |
+| `Footnote`    | 10px  | Normal |
+| `Caption1`    | 10px  | Normal |
+| `Caption2`    | 10px  | Normal |
 
 ### Traits
 

@@ -1,0 +1,31 @@
+---
+title: Assets
+description: Learn how maccn handles icons and other assets.
+---
+
+## Built-in icons
+
+Controls such as `MacCheckbox`, `MacSwitch`, `MacPopUpButton`, `MacSearchField`, and `MacStepper` include their own vector graphics:
+
+- Check marks and dashes for checkbox states
+- Switch thumb and track shapes
+- Pop-up button chevrons
+- Search field magnifying glass and clear button
+- Stepper up/down arrows
+
+These are implemented as regular GPUI [`Image`](https://docs.rs/gpui/latest/gpui/struct.Image.html) elements with embedded SVG bytes, so they scale cleanly at every control size and DPI.
+
+## No asset setup required
+
+Because every glyph is compiled into the crate binary, there is no `assets/` folder to configure and no font file to load. This keeps both native and WebAssembly builds self-contained.
+
+## Custom icons
+
+For your own application icons, use GPUI's native image support or any GPUI-compatible icon library. You can style custom icons with colors from [`MaccnTheme`](./theme):
+
+```rust
+use maccn::theme::ThemeExt as _;
+
+let theme = cx.theme();
+let icon_color = theme.label_secondary;
+```

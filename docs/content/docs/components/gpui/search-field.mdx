@@ -3,49 +3,31 @@ title: Search Field
 description: A search input with magnifier icon and clear button.
 ---
 
-<ComponentPreview component="search-field" />
-
-## Definition
-
-A search input field with a magnifying glass icon and clear button. Wraps `MacTextField` in pill mode with search-specific styling.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="search-field/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacSearchField, InputState};
+use gpui::Context as _;
+use gpui_base::input::InputState;
+use maccn::MacSearchField;
 
-let state = cx.new_entity(InputState::new());
+let state = cx.new(|cx| InputState::new(window, cx).placeholder("Search"));
 
-MacSearchField::new("search", state.clone())
-    .on_submit(|value, _, _, cx| {
-        println!("Search: {}", value);
-    })
+MacSearchField::new("search", &state);
 ```
 
-### Sizes
+## Clearing
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="search-field/Clearing" />
 
-```rust
-MacSearchField::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
-MacSearchField::new("l", state.clone()).size(MacControlSize::Large)
-MacSearchField::new("r", state.clone()) // Regular (default)
-MacSearchField::new("s", state.clone()).size(MacControlSize::Small)
-MacSearchField::new("m", state.clone()).size(MacControlSize::Mini)
-```
+## Sizes
 
-### Disabled
+<ComponentPreview name="search-field/Sizes" />
 
-```rust
-MacSearchField::new("sf", state.clone()).disabled(true)
-```
+## Disabled
+
+<ComponentPreview name="search-field/Disabled" />
 
 ## API
 
@@ -56,14 +38,6 @@ MacSearchField::new("sf", state.clone()).disabled(true)
 | `size`     | `MacControlSize` | `Regular` |
 | `disabled` | `bool`           | `false`   |
 
-### Methods
+### InputState
 
-| Method                    | Description             |
-| ------------------------- | ----------------------- |
-| `state.clean(window, cx)` | Clears the field value. |
-
-### Events
-
-| Event       | Payload                                      |
-| ----------- | -------------------------------------------- |
-| `on_submit` | `(&str, &ClickEvent, &mut Window, &mut App)` |
+`MacSearchField::new(id, &state)` requires an `Entity<InputState>` created with `InputState::new(window, cx)`.

@@ -3,49 +3,31 @@ title: Secure Field
 description: A masked password input field.
 ---
 
-<ComponentPreview component="secure-field" />
-
-## Definition
-
-A masked password input field (`NSSecureTextField`). The input state must be created with `.masked(true)` to enable secure text entry.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="secure-field/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacSecureField, InputState};
+use gpui::Context as _;
+use gpui_base::input::InputState;
+use maccn::MacSecureField;
 
-let state = cx.new_entity(InputState::new().masked(true));
+let state = cx.new(|cx| {
+    InputState::new(window, cx)
+        .placeholder("Passphrase")
+        .masked(true)
+});
 
-MacSecureField::new("password", state.clone())
-    .on_submit(|value, _, _, cx| {
-        println!("Password entered");
-    })
+MacSecureField::new("password", &state);
 ```
 
-### Sizes
+## Sizes
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="secure-field/Sizes" />
 
-```rust
-MacSecureField::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
-MacSecureField::new("l", state.clone()).size(MacControlSize::Large)
-MacSecureField::new("r", state.clone()) // Regular (default)
-MacSecureField::new("s", state.clone()).size(MacControlSize::Small)
-MacSecureField::new("m", state.clone()).size(MacControlSize::Mini)
-```
+## Disabled
 
-### Disabled
-
-```rust
-MacSecureField::new("sf", state.clone()).disabled(true)
-```
+<ComponentPreview name="secure-field/Disabled" />
 
 ## API
 
@@ -56,8 +38,6 @@ MacSecureField::new("sf", state.clone()).disabled(true)
 | `size`     | `MacControlSize` | `Regular` |
 | `disabled` | `bool`           | `false`   |
 
-### Events
+### InputState
 
-| Event       | Payload                                      |
-| ----------- | -------------------------------------------- |
-| `on_submit` | `(&str, &ClickEvent, &mut Window, &mut App)` |
+`MacSecureField::new(id, &state)` requires an `Entity<InputState>` created with `.masked(true)`.

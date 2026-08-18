@@ -18,7 +18,7 @@ Help users discover macOS-inspired GPUI components and their documentation.
 
 Interactive demos run as WebAssembly at /examples/?component=<name>.
 
-Prefer following the on-site installation guide: ${ROUTES.DOCS_INSTALLATION}
+Prefer following the on-site installation guide: ${ROUTES.DOCS}
 `;
 
 export const siteAgentSkillDigest = (): string => {

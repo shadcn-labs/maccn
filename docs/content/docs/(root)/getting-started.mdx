@@ -1,0 +1,193 @@
+---
+title: Getting Started
+description: Learn how to set up and use maccn in your GPUI project.
+---
+
+## Installation
+
+This guide assumes a working GPUI project. For upstream setup details, see the [gpui-component repository](https://github.com/longbridge/gpui-component).
+
+Add `maccn` and its GPUI dependencies to your `Cargo.toml`:
+
+```toml
+[dependencies]
+maccn = { git = "https://github.com/shadcn-labs/maccn" }
+gpui = { git = "https://github.com/zed-industries/zed" }
+gpui_platform = { git = "https://github.com/zed-industries/zed", features = ["font-kit"] }
+```
+
+## Quick Start
+
+Here's a minimal example to get started:
+
+```rust
+use gpui::*;
+use maccn::{MacButton, theme::ThemeExt as _};
+
+pub struct HelloWorld;
+
+impl Render for HelloWorld {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .flex_col()
+            .gap_2()
+            .size_full()
+            .items_center()
+            .justify_center()
+            .child("Hello, World!")
+            .child(
+                MacButton::new("ok")
+                    .child("Let's Go!")
+                    .on_click(|_, _, _| println!("Clicked!")),
+            )
+    }
+}
+
+fn main() {
+    gpui_platform::application().run(move |cx: &mut App| {
+        // This must be called before using any maccn features.
+        maccn::init(cx);
+
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| HelloWorld)
+        })
+        .expect("Failed to open window");
+    });
+}
+```
+
+<Callout>
+  Call `maccn::init(cx)` on the first line inside the `app.run` closure. This initializes the `MaccnTheme` global and registers `gpui-base` infrastructure.
+</Callout>
+
+## Basic Concepts
+
+### Stateless Elements
+
+maccn components are stateless [`RenderOnce`](https://docs.rs/gpui/latest/gpui/trait.RenderOnce.html) elements. State lives in your view, which makes components predictable and easy to compose.
+
+```rust
+struct MyView;
+
+impl Render for MyView {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .flex_col()
+            .gap_2()
+            .child(MacButton::new("btn").child("Click me"))
+            .child(MacSwitch::new("sw").checked(true))
+    }
+}
+```
+
+### Stateful Components
+
+Some components need an [`Entity`] state object, such as text fields (`InputState`) and sliders (`SliderState`). Create the entity in your view and pass a reference to the component.
+
+```rust
+use gpui_base::input::InputState;
+use maccn::MacTextField;
+
+struct MyView {
+    input: Entity<InputState>,
+}
+
+impl MyView {
+    fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
+        let input = cx.new(|cx| {
+            InputState::new(window, cx)
+                .placeholder("Server name")
+                .default_value("")
+        });
+        Self { input }
+    }
+}
+
+impl Render for MyView {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        MacTextField::new("field", &self.input)
+    }
+}
+```
+
+### Theming
+
+Components read colors from the global [`MaccnTheme`]. Access it through the [`ThemeExt`](https://docs.rs/maccn/latest/maccn/theme/trait.ThemeExt.html) trait:
+
+```rust
+use maccn::theme::ThemeExt as _;
+
+let theme = cx.theme();
+let label = theme.label;
+let accent = theme.accent;
+```
+
+### Sizing
+
+Every interactive control supports the five macOS control sizes:
+
+```rust
+use maccn::MacControlSize;
+
+MacButton::new("xl").size(MacControlSize::ExtraLarge)
+MacButton::new("l").size(MacControlSize::Large)
+MacButton::new("r") // Regular (default)
+MacButton::new("s").size(MacControlSize::Small)
+MacButton::new("m").size(MacControlSize::Mini)
+```
+
+### Variants
+
+Buttons offer several visual variants:
+
+```rust
+use maccn::ButtonVariant;
+
+MacButton::new("default").child("Default")
+MacButton::new("prominent")
+    .variant(ButtonVariant::Prominent)
+    .child("Prominent")
+MacButton::new("destructive")
+    .variant(ButtonVariant::Destructive)
+    .child("Delete")
+```
+
+## Icons & Assets
+
+maccn does not rely on external icon assets. All control glyphs (check marks, chevrons, magnifiers, etc.) are rendered as inline SVG images from the crate itself, so there is no asset setup step.
+
+## Running the Showcase
+
+The repository includes an interactive showcase. Run it natively:
+
+```bash
+cargo run -p maccn --example showcase
+```
+
+Open a specific component:
+
+```bash
+cargo run -p maccn --example showcase -- switch
+```
+
+Or build the WebAssembly demo for the docs site:
+
+```bash
+make -C crates/maccn/examples/wasm build
+pnpm install
+pnpm dev
+```
+
+## Next Steps
+
+Browse the component docs to learn more about each control:
+
+- [Button](./components/gpui/button) — Push buttons
+- [Text Field](./components/gpui/text-field) — Single-line inputs
+- [Checkbox](./components/gpui/checkbox) — Tri-state checkbox
+- [Switch](./components/gpui/switch) — Toggle switch
+- [More components...](./components/gpui)
+
+[`Entity`]: https://docs.rs/gpui/latest/gpui/struct.Entity.html

@@ -16,15 +16,16 @@ thread_local! {
 
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen]
-pub fn run(component: Option<String>) -> Result<(), JsValue> {
+pub fn run(component: Option<String>, card_mode: Option<bool>) -> Result<(), JsValue> {
     console_error_panic_hook::set_once();
     let _ = console_log::init_with_level(log::Level::Info);
     tracing_wasm::set_as_global_default();
     gpui_platform::web_init();
 
     let component = component.unwrap_or_else(|| "overview".to_owned());
+    let card_mode = card_mode.unwrap_or(false);
 
-    let handle = showcase::run_embedded(web_application(), component);
+    let handle = showcase::run_embedded(web_application(), component, card_mode);
     APPLICATION.with(|application| *application.borrow_mut() = Some(handle));
     Ok(())
 }

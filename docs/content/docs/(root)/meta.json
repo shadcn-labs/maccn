@@ -1,4 +1,10 @@
 {
   "title": "Overview",
-  "pages": ["index", "installation", "mcp", "registry"]
+  "pages": [
+    "index",
+    "getting-started",
+    "theme",
+    "assets",
+    "changelog"
+  ]
 }

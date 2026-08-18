@@ -3,18 +3,7 @@ title: Stepper
 description: An increment/decrement control with up and down chevrons.
 ---
 
-<ComponentPreview component="stepper" />
-
-## Definition
-
-An increment/decrement control with up and down chevron buttons. Available in all five macOS control sizes.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="stepper/Basic" />
 
 ## Usage
 
@@ -22,31 +11,25 @@ maccn = "0.1"
 use maccn::MacStepper;
 
 MacStepper::new("quantity")
-    .on_increment(|_, cx| {
+    .on_increment(|_, _| {
         println!("Incremented");
     })
-    .on_decrement(|_, cx| {
+    .on_decrement(|_, _| {
         println!("Decremented");
-    })
+    });
 ```
 
-### Sizes
+## With a text field
 
-All five macOS control sizes; `regular` is the default.
+<ComponentPreview name="stepper/WithTextField" />
 
-```rust
-MacStepper::new("xl").size(MacControlSize::ExtraLarge)
-MacStepper::new("l").size(MacControlSize::Large)
-MacStepper::new("r") // Regular (default)
-MacStepper::new("s").size(MacControlSize::Small)
-MacStepper::new("m").size(MacControlSize::Mini)
-```
+## Sizes
 
-### Disabled
+<ComponentPreview name="stepper/Sizes" />
 
-```rust
-MacStepper::new("st").disabled(true)
-```
+## Disabled
+
+<ComponentPreview name="stepper/Disabled" />
 
 ## API
 

@@ -99,6 +99,14 @@ pub fn focus_ring_shadow(color: Hsla) -> Vec<BoxShadow> {
     vec![gpui_base::box_shadow(px(0.), px(0.), px(3.5), px(0.5), color)]
 }
 
+/// macOS text-field focus ring: a 1px accent hairline stacked with the wide accent glow.
+pub fn field_focus_ring_shadow(border: Hsla, ring: Hsla) -> Vec<BoxShadow> {
+    vec![
+        gpui_base::box_shadow(px(0.), px(0.), px(0.), px(1.), border),
+        gpui_base::box_shadow(px(0.), px(0.), px(0.), px(3.5), ring),
+    ]
+}
+
 /// Converts a color to a `#rrggbb` hex string for SVG paints.
 pub fn color_hex(color: Hsla) -> String {
     let rgb = color.to_rgb();

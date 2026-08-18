@@ -7,7 +7,7 @@ use gpui::{
 };
 use gpui_base::{Radio as BaseRadio, RadioGroup as BaseRadioGroup};
 
-use crate::{MacControlSize, focus_ring_shadow, theme::ThemeExt as _};
+use crate::{MacControlSize, control_text_size, focus_ring_shadow, theme::ThemeExt as _, CONTROL_TEXT_WEIGHT};
 
 fn geometry(size: MacControlSize) -> (f32, f32, f32) {
     match size {
@@ -23,8 +23,11 @@ fn geometry(size: MacControlSize) -> (f32, f32, f32) {
 #[derive(IntoElement)]
 pub struct MacRadio {
     inner: BaseRadio,
+    id: ElementId,
     size: MacControlSize,
     checked: bool,
+    disabled: bool,
+    children: Vec<AnyElement>,
 }
 
 impl MacRadio {
@@ -33,8 +36,11 @@ impl MacRadio {
         let id = id.into();
         Self {
             inner: BaseRadio::new(id.clone()),
+            id,
             size: MacControlSize::Regular,
             checked: false,
+            disabled: false,
+            children: Vec::new(),
         }
     }
 
@@ -57,6 +63,7 @@ impl MacRadio {
     pub fn disabled(self, disabled: bool) -> Self {
         Self {
             inner: self.inner.disabled(disabled),
+            disabled,
             ..self
         }
     }
@@ -89,7 +96,7 @@ impl Styled for MacRadio {
 
 impl ParentElement for MacRadio {
     fn extend(&mut self, elements: impl IntoIterator<Item = AnyElement>) {
-        self.inner.extend(elements);
+        self.children.extend(elements);
     }
 }
 
@@ -105,34 +112,39 @@ impl RenderOnce for MacRadio {
     fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {
         let theme = cx.theme();
         let checked = self.checked;
+        let disabled = self.disabled;
         let size = self.size;
-        let (radio_size, dot_size, _) = geometry(size);
+        let (radio_size, dot_size, gap) = geometry(size);
 
-        self.inner
-            .styles(|styles| {
-                styles
-                    .checked(|style| style.bg(theme.accent))
-                    .disabled(|style| {
-                        style
-                            .bg(theme.control_disabled_strong)
-                            .when(checked, |style| style.bg(theme.accent_disabled_strong))
-                    })
-            })
-            .flex()
+        let control = div()
+            .id((self.id.clone(), "control"))
             .flex_none()
+            .flex()
             .items_center()
             .justify_center()
             .size(px(radio_size))
             .rounded_full()
-            .bg(theme.control)
-            .active(|style| {
-                style.bg(if checked {
-                    theme.accent_pressed
+            .bg(if disabled {
+                if checked {
+                    theme.accent_disabled_strong
                 } else {
-                    theme.control_pressed
-                })
+                    theme.control_disabled_strong
+                }
+            } else {
+                theme.control
             })
-            .focus_visible(|style| style.shadow(focus_ring_shadow(theme.focus_ring)))
+            .when(checked && !disabled, |this| this.bg(theme.accent))
+            .active(|style| {
+                if disabled {
+                    style
+                } else {
+                    style.bg(if checked {
+                        theme.accent_pressed
+                    } else {
+                        theme.control_pressed
+                    })
+                }
+            })
             .when(checked, |this| {
                 this.child(
                     div()
@@ -141,7 +153,18 @@ impl RenderOnce for MacRadio {
                         .rounded_full()
                         .bg(theme.label_on_accent),
                 )
-            })
+            });
+
+        self.inner
+            .flex()
+            .items_center()
+            .gap(px(gap))
+            .text_size(px(control_text_size(size)))
+            .font_weight(CONTROL_TEXT_WEIGHT)
+            .text_color(theme.label)
+            .focus_visible(|style| style.shadow(focus_ring_shadow(theme.focus_ring)))
+            .child(control)
+            .child(div().flex_none().children(self.children))
     }
 }
 

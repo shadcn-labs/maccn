@@ -2,7 +2,7 @@
 
 use gpui::{
     App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window,
+    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window, div,
     prelude::FluentBuilder as _, px,
 };
 use gpui_base::{
@@ -10,20 +10,20 @@ use gpui_base::{
 };
 
 use crate::{
-    MacControlSize, check_mark, dash_mark, focus_ring_shadow,
-    theme::ThemeExt as _,
+    MacControlSize, check_mark, control_text_size, dash_mark, focus_ring_shadow,
+    theme::ThemeExt as _, CONTROL_TEXT_WEIGHT,
 };
 
 /// Re-exported checkbox value.
 pub type MacCheckboxState = CheckboxState;
 
-fn geometry(size: MacControlSize) -> (f32, f32, f32, f32) {
+fn geometry(size: MacControlSize) -> (f32, f32, f32, f32, f32, f32, f32) {
     match size {
-        MacControlSize::ExtraLarge => (18., 6.5, 11.7, 7.),
-        MacControlSize::Large => (18., 6.5, 11.7, 5.),
-        MacControlSize::Regular => (16., 5.5, 9.3, 5.),
-        MacControlSize::Small => (14., 4.5, 9.3, 4.),
-        MacControlSize::Mini => (12., 3.5, 7.9, 3.),
+        MacControlSize::ExtraLarge => (18., 6.5, 11.7, 11.3, 8., 2., 7.),
+        MacControlSize::Large => (18., 6.5, 11.7, 11.3, 8., 2., 5.),
+        MacControlSize::Regular => (16., 5.5, 9.3, 8.9, 6.5, 2., 5.),
+        MacControlSize::Small => (14., 4.5, 9.3, 8.9, 6.5, 2., 4.),
+        MacControlSize::Mini => (12., 3.5, 7.9, 7.6, 5.5, 1.7, 3.),
     }
 }
 
@@ -33,6 +33,7 @@ pub struct MacCheckbox {
     inner: BaseCheckbox,
     size: MacControlSize,
     state: CheckboxState,
+    children: Vec<AnyElement>,
 }
 
 impl MacCheckbox {
@@ -43,6 +44,7 @@ impl MacCheckbox {
             inner: BaseCheckbox::new(id.clone()),
             size: MacControlSize::Regular,
             state: CheckboxState::Unchecked,
+            children: Vec::new(),
         }
     }
 
@@ -116,7 +118,7 @@ impl Styled for MacCheckbox {
 
 impl ParentElement for MacCheckbox {
     fn extend(&mut self, elements: impl IntoIterator<Item = AnyElement>) {
-        self.inner.extend(elements);
+        self.children.extend(elements);
     }
 }
 
@@ -133,7 +135,7 @@ impl RenderOnce for MacCheckbox {
         let theme = cx.theme();
         let size = self.size;
         let state = self.state;
-        let (box_size, radius, check_size, gap) = geometry(size);
+        let (box_size, radius, check_w, check_h, dash_w, dash_h, gap) = geometry(size);
         let checked = matches!(state, CheckboxState::Checked | CheckboxState::Indeterminate);
 
         let indicator = CheckboxIndicator::new()
@@ -156,9 +158,9 @@ impl RenderOnce for MacCheckbox {
             })
             .when(checked, |this| {
                 this.child(if state == CheckboxState::Checked {
-                    check_mark(theme.label_on_accent, check_size).into_any_element()
+                    check_mark(theme.label_on_accent, check_w, check_h).into_any_element()
                 } else {
-                    dash_mark(theme.label_on_accent, check_size).into_any_element()
+                    dash_mark(theme.label_on_accent, dash_w, dash_h).into_any_element()
                 })
             });
 
@@ -166,7 +168,11 @@ impl RenderOnce for MacCheckbox {
             .flex()
             .items_center()
             .gap(px(gap))
+            .text_size(px(control_text_size(size)))
+            .font_weight(CONTROL_TEXT_WEIGHT)
+            .text_color(theme.label)
             .focus_visible(|style| style.shadow(focus_ring_shadow(theme.focus_ring)))
             .child(indicator)
+            .child(div().flex_none().children(self.children))
     }
 }

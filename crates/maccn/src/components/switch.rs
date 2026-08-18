@@ -2,12 +2,12 @@
 
 use gpui::{
     App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window,
+    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window, div,
     prelude::FluentBuilder as _, px,
 };
 use gpui_base::{Switch as BaseSwitch, SwitchThumb, SwitchTrack};
 
-use crate::{MacControlSize, theme::ThemeExt as _};
+use crate::{MacControlSize, control_text_size, theme::ThemeExt as _, CONTROL_TEXT_WEIGHT};
 
 fn track_size(size: MacControlSize) -> (f32, f32) {
     match size {
@@ -45,6 +45,7 @@ pub struct MacSwitch {
     size: MacControlSize,
     checked: bool,
     disabled: bool,
+    children: Vec<AnyElement>,
 }
 
 impl MacSwitch {
@@ -57,6 +58,7 @@ impl MacSwitch {
             size: MacControlSize::Regular,
             checked: false,
             disabled: false,
+            children: Vec::new(),
         }
     }
 
@@ -67,9 +69,12 @@ impl MacSwitch {
     }
 
     /// Sets the application-controlled checked value.
-    pub fn checked(mut self, checked: bool) -> Self {
-        self.checked = checked;
-        self
+    pub fn checked(self, checked: bool) -> Self {
+        Self {
+            inner: self.inner.checked(checked),
+            checked,
+            ..self
+        }
     }
 
     /// Disables the switch.
@@ -109,7 +114,7 @@ impl Styled for MacSwitch {
 
 impl ParentElement for MacSwitch {
     fn extend(&mut self, elements: impl IntoIterator<Item = AnyElement>) {
-        self.inner.extend(elements);
+        self.children.extend(elements);
     }
 }
 
@@ -173,6 +178,10 @@ impl RenderOnce for MacSwitch {
             .flex()
             .items_center()
             .gap(px(8.))
+            .text_size(px(control_text_size(size)))
+            .font_weight(CONTROL_TEXT_WEIGHT)
+            .text_color(theme.label)
+            .child(div().flex_none().children(self.children))
             .child(track)
     }
 }

@@ -3,73 +3,35 @@ title: Text Field
 description: A text input with placeholder, prefix, and suffix support.
 ---
 
-<ComponentPreview component="text-field" />
-
-## Definition
-
-A text input field (`NSTextField`) with placeholder text, prefix/suffix elements, and configurable corner radius. Requires an `InputState` entity.
-
-## Installation
-
-```toml
-[dependencies]
-maccn = "0.1"
-```
+<ComponentPreview name="text-field/Basic" />
 
 ## Usage
 
 ```rust
-use maccn::{MacTextField, InputState};
+use gpui::Context as _;
+use gpui_base::input::InputState;
+use maccn::{MacTextField, MacLabel};
 
-let state = cx.new_entity(InputState::new());
+let state = cx.new(|cx| InputState::new(window, cx).placeholder("you@example.com"));
 
-MacTextField::new("email", state.clone())
-    .placeholder("you@example.com")
-    .on_submit(|value, _, _, cx| {
-        println!("Email: {}", value);
-    })
+MacTextField::new("email", &state);
 ```
 
-### Pill Mode
+## Labelling
 
-```rust
-MacTextField::new("search", state.clone())
-    .pill()
-    .placeholder("Search...")
-```
+<ComponentPreview name="text-field/Labelled" />
 
-### Prefix and Suffix
+## Placeholder
 
-```rust
-MacTextField::new("url", state.clone())
-    .prefix(MacLabel::new("proto").child("https://"))
-    .suffix(MacLabel::new("tld").child(".com"))
-```
+<ComponentPreview name="text-field/Placeholder" />
 
-### Custom Radius
+## Sizes
 
-```rust
-MacTextField::new("custom", state.clone())
-    .radius(8.0)
-```
+<ComponentPreview name="text-field/Sizes" />
 
-### Sizes
+## Disabled
 
-All five macOS control sizes; `regular` is the default.
-
-```rust
-MacTextField::new("xl", state.clone()).size(MacControlSize::ExtraLarge)
-MacTextField::new("l", state.clone()).size(MacControlSize::Large)
-MacTextField::new("r", state.clone()) // Regular (default)
-MacTextField::new("s", state.clone()).size(MacControlSize::Small)
-MacTextField::new("m", state.clone()).size(MacControlSize::Mini)
-```
-
-### Disabled
-
-```rust
-MacTextField::new("tf", state.clone()).disabled(true)
-```
+<ComponentPreview name="text-field/Disabled" />
 
 ## API
 
@@ -89,8 +51,6 @@ MacTextField::new("tf", state.clone()).disabled(true)
 | `suffix(element)` | Adds a suffix element.       |
 | `radius(f32)`     | Sets custom corner radius.   |
 
-### Events
+### InputState
 
-| Event       | Payload                                      |
-| ----------- | -------------------------------------------- |
-| `on_submit` | `(&str, &ClickEvent, &mut Window, &mut App)` |
+`MacTextField::new(id, &state)` requires an `Entity<InputState>` created with `InputState::new(window, cx)`.

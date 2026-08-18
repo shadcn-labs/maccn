@@ -47,11 +47,11 @@ export const LABS_NAV_SECTIONS = [
 ] as const;
 
 export const TOP_LEVEL_SECTIONS = [
-  { href: ROUTES.DOCS, name: "Introduction" },
-  { href: ROUTES.DOCS_INSTALLATION, name: "Installation" },
+  { href: ROUTES.DOCS, name: "Installation" },
+  { href: ROUTES.DOCS_GETTING_STARTED, name: "Getting Started" },
+  { href: ROUTES.DOCS_THEME, name: "Theme" },
+  { href: ROUTES.DOCS_ASSETS, name: "Assets" },
   { href: ROUTES.DOCS_COMPONENTS, name: "Components" },
-  { href: ROUTES.DOCS_MCP, name: "MCP" },
-  { href: ROUTES.DOCS_REGISTRY, name: "Registry" },
   { href: ROUTES.LLMS, name: "llms.txt" },
   { href: ROUTES.DOCS_CHANGELOG, name: "Changelog" },
 ];

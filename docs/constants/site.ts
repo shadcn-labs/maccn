@@ -20,14 +20,12 @@ export const SITE = {
     TWITTER: "@alaymanguy",
   },
   DESCRIPTION: {
-    LONG: "A collection of beautifully designed, accessible, and customizable macOS UI components. Built on GPUI and Native SDK. Copy-paste ready.",
+    LONG: "A collection of beautifully designed, accessible, and customizable macOS UI components. Built on GPUI. Copy-paste ready.",
     SHORT: "Beautiful macOS UIs, made simple",
   },
   KEYWORDS: [
     "gpui",
-    "native-sdk",
     "rust",
-    "typescript",
     "ui",
     "components",
     "macos",
@@ -35,7 +33,6 @@ export const SITE = {
   ] as const,
   NAME: "maccn",
   OG_IMAGE: `${baseUrl}/og`,
-  REGISTRY: "@maccn",
   URL: baseUrl,
 };
 
