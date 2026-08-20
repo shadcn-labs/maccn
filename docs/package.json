@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "make -C ../crates/maccn/examples/wasm build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "wasm:build": "make -C ../crates/maccn/examples/wasm build",

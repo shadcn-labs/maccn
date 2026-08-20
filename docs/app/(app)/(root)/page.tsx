@@ -28,7 +28,7 @@ export default function IndexPage() {
         </section>
 
         <section className="container-wrapper">
-          <div className="container">
+          <div className="container pb-12 md:pb-16 lg:pb-24">
             <HomeBento />
           </div>
         </section>
