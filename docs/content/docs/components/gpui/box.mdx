@@ -5,11 +5,15 @@ description: A grouped settings container with rounded corners and padding.
 
 <ComponentPreview name="box/Basic" />
 
+## Import
+
+```rust
+use maccn::MacBox;
+```
+
 ## Usage
 
 ```rust
-use maccn::{MacBox, MacLabel, LabelStyle};
-
 MacBox::new("settings-group")
     .child(MacLabel::new("caption").style(LabelStyle::Footnote).child("Network"))
     .child("Content here");

@@ -5,13 +5,15 @@ description: A text input with placeholder, prefix, and suffix support.
 
 <ComponentPreview name="text-field/Basic" />
 
+## Import
+
+```rust
+use maccn::MacTextField;
+```
+
 ## Usage
 
 ```rust
-use gpui::Context as _;
-use gpui_base::input::InputState;
-use maccn::{MacTextField, MacLabel};
-
 let state = cx.new(|cx| InputState::new(window, cx).placeholder("you@example.com"));
 
 MacTextField::new("email", &state);
@@ -21,17 +23,78 @@ MacTextField::new("email", &state);
 
 <ComponentPreview name="text-field/Labelled" />
 
+```rust
+use gpui::div;
+use maccn::{MacLabel, MacTextField};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacLabel::new("field-label").child("Server:"))
+    .child(MacTextField::new("field-labelled", &state).w(px(200.)))
+```
+
 ## Placeholder
 
 <ComponentPreview name="text-field/Placeholder" />
+
+```rust
+use gpui::Context as _;
+use gpui_base::input::InputState;
+use maccn::MacTextField;
+
+let state = cx.new(|cx| {
+    InputState::new(window, cx).placeholder("you@example.com")
+});
+
+MacTextField::new("field-placeholder", &state).w(px(220.));
+```
 
 ## Sizes
 
 <ComponentPreview name="text-field/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacTextField};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacTextField::new("field-xl", &state)
+            .size(MacControlSize::ExtraLarge)
+            .w(px(220.)),
+    )
+    .child(
+        MacTextField::new("field-l", &state)
+            .size(MacControlSize::Large)
+            .w(px(180.)),
+    )
+    .child(MacTextField::new("field-r", &state).w(px(160.)))
+    .child(
+        MacTextField::new("field-s", &state)
+            .size(MacControlSize::Small)
+            .w(px(140.)),
+    )
+    .child(
+        MacTextField::new("field-m", &state)
+            .size(MacControlSize::Mini)
+            .w(px(120.)),
+    )
+```
+
 ## Disabled
 
 <ComponentPreview name="text-field/Disabled" />
+
+```rust
+MacTextField::new("field-d", &state)
+    .disabled(true)
+    .w(px(220.))
+```
 
 ## API
 

@@ -129,13 +129,6 @@ export const CommandMenu = ({
     [tree, currentBase]
   );
 
-  const handleDocPageHighlight = useCallback(
-    (item: { url: string; name?: string }) => {
-      setShowGoToPage(true);
-    },
-    []
-  );
-
   const runCommand = useCallback((command: () => unknown) => {
     setOpen(false);
     command();
@@ -165,7 +158,7 @@ export const CommandMenu = ({
         key={url}
         keywords={buildDocPageKeywords(parsed, url, breadcrumb)}
         value={[...breadcrumb, title].filter(Boolean).join(" ")}
-        onHighlight={() => handleDocPageHighlight({ name: title, url })}
+        onHighlight={() => setShowGoToPage(true)}
         onSelect={() => runCommand(() => router.push(url))}
       >
         <DocPageLeadingIcon parsed={parsed} />
@@ -201,7 +194,6 @@ export const CommandMenu = ({
           return !prev;
         });
       }
-
     };
 
     document.addEventListener("keydown", down);

@@ -5,11 +5,15 @@ description: A circular help button with a question mark glyph.
 
 <ComponentPreview name="help-button/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::MacHelpButton;
+```
 
+## Usage
+
+```rust
 MacHelpButton::new("help")
     .on_click(|_, _, _| {
         println!("Help clicked");
@@ -20,9 +24,28 @@ MacHelpButton::new("help")
 
 <ComponentPreview name="help-button/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacHelpButton};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacHelpButton::new("help-xl").size(MacControlSize::ExtraLarge))
+    .child(MacHelpButton::new("help-l").size(MacControlSize::Large))
+    .child(MacHelpButton::new("help-r"))
+    .child(MacHelpButton::new("help-s").size(MacControlSize::Small))
+    .child(MacHelpButton::new("help-m").size(MacControlSize::Mini))
+```
+
 ## Disabled
 
 <ComponentPreview name="help-button/Disabled" />
+
+```rust
+MacHelpButton::new("help-d").disabled(true)
+```
 
 ## API
 

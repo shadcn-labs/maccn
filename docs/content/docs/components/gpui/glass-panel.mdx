@@ -5,11 +5,15 @@ description: A translucent panel with blur and vibrancy effects.
 
 <ComponentPreview name="glass-panel/Basic" />
 
+## Import
+
+```rust
+use maccn::{GlassMaterial, MacGlassPanel};
+```
+
 ## Usage
 
 ```rust
-use maccn::{MacGlassPanel, GlassMaterial};
-
 MacGlassPanel::new("panel")
     .material(GlassMaterial::Clear)
     .child("Media controls");

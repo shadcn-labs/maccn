@@ -5,11 +5,15 @@ description: A macOS toggle switch with smooth animation.
 
 <ComponentPreview name="switch/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::MacSwitch;
+```
 
+## Usage
+
+```rust
 MacSwitch::new("wifi")
     .checked(true)
     .on_change(|next, _, _, _| {
@@ -22,9 +26,41 @@ MacSwitch::new("wifi")
 
 <ComponentPreview name="switch/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacSwitch};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacSwitch::new("switch-xl").size(MacControlSize::ExtraLarge).checked(true))
+    .child(MacSwitch::new("switch-l").size(MacControlSize::Large).checked(true))
+    .child(MacSwitch::new("switch-r").checked(true))
+    .child(MacSwitch::new("switch-s").size(MacControlSize::Small).checked(true))
+    .child(MacSwitch::new("switch-m").size(MacControlSize::Mini).checked(true))
+```
+
 ## Disabled
 
 <ComponentPreview name="switch/Disabled" />
+
+```rust
+use gpui::div;
+use maccn::MacSwitch;
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(MacSwitch::new("switch-d1").disabled(true).child("Disabled"))
+    .child(
+        MacSwitch::new("switch-d2")
+            .checked(true)
+            .disabled(true)
+            .child("Disabled on"),
+    )
+```
 
 ## API
 

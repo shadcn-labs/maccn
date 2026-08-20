@@ -5,13 +5,15 @@ description: A masked password input field.
 
 <ComponentPreview name="secure-field/Basic" />
 
+## Import
+
+```rust
+use maccn::MacSecureField;
+```
+
 ## Usage
 
 ```rust
-use gpui::Context as _;
-use gpui_base::input::InputState;
-use maccn::MacSecureField;
-
 let state = cx.new(|cx| {
     InputState::new(window, cx)
         .placeholder("Passphrase")
@@ -25,9 +27,35 @@ MacSecureField::new("password", &state);
 
 <ComponentPreview name="secure-field/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacSecureField};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacSecureField::new("secure-xl", &state)
+            .size(MacControlSize::ExtraLarge)
+            .w(px(220.)),
+    )
+    .child(
+        MacSecureField::new("secure-s", &state)
+            .size(MacControlSize::Small)
+            .w(px(160.)),
+    )
+```
+
 ## Disabled
 
 <ComponentPreview name="secure-field/Disabled" />
+
+```rust
+MacSecureField::new("secure-d", &state)
+    .disabled(true)
+    .w(px(220.))
+```
 
 ## API
 

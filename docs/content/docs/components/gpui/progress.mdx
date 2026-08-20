@@ -5,11 +5,15 @@ description: A horizontal progress bar with determinate and indeterminate modes.
 
 <ComponentPreview name="progress/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::{MacProgress, ProgressSize};
+```
 
+## Usage
+
+```rust
 // Determinate
 MacProgress::new("upload").value(40.);
 
@@ -21,23 +25,53 @@ MacProgress::new("loading").indeterminate(true);
 
 <ComponentPreview name="progress/Indeterminate" />
 
+```rust
+use maccn::MacProgress;
+
+MacProgress::new("progress-indeterminate")
+    .w(px(220.))
+    .indeterminate(true)
+```
+
 ## Sizes
 
 <ComponentPreview name="progress/Sizes" />
+
+```rust
+use gpui::div;
+use maccn::{MacProgress, ProgressSize};
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .w(px(220.))
+    .child(
+        MacProgress::new("progress-r")
+            .w_full()
+            .value(progress_value * 100.),
+    )
+    .child(
+        MacProgress::new("progress-s")
+            .size(ProgressSize::Small)
+            .w_full()
+            .value(progress_value * 100.),
+    )
+```
 
 ## API
 
 ### Props
 
-| Prop            | Type          | Default       |
-| --------------- | ------------- | ------------- |
-| `size`          | `ProgressSize`| `Regular`     |
-| `value`         | `f32`         | `0.0`         |
-| `indeterminate` | `bool`        | `false`       |
+| Prop            | Type           | Default   |
+| --------------- | -------------- | --------- |
+| `size`          | `ProgressSize` | `Regular` |
+| `value`         | `f32`          | `0.0`     |
+| `indeterminate` | `bool`         | `false`   |
 
 ### ProgressSize
 
-| Variant  | Height |
-| -------- | ------ |
-| `Regular`| 10px   |
-| `Small`  | 6px    |
+| Variant   | Height |
+| --------- | ------ |
+| `Regular` | 10px   |
+| `Small`   | 6px    |

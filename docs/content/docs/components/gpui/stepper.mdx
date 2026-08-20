@@ -5,11 +5,15 @@ description: An increment/decrement control with up and down chevrons.
 
 <ComponentPreview name="stepper/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::MacStepper;
+```
 
+## Usage
+
+```rust
 MacStepper::new("quantity")
     .on_increment(|_, _| {
         println!("Incremented");
@@ -23,13 +27,72 @@ MacStepper::new("quantity")
 
 <ComponentPreview name="stepper/WithTextField" />
 
+```rust
+use gpui::div;
+use maccn::{MacStepper, MacTextField};
+
+let entity = cx.entity().downgrade();
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacTextField::new("stepper-field", &state).w(px(60.)))
+    .child(
+        MacStepper::new("stepper-paired").on_increment({
+            let entity = entity.clone();
+            move |window, cx| {
+                _ = entity.update(cx, |this, cx| {
+                    this.stepper_value = (this.stepper_value + 1).min(99);
+                    let value = this.stepper_value;
+                    this.stepper_input.update(cx, |state, cx| {
+                        state.set_value(value.to_string(), window, cx);
+                    });
+                    cx.notify();
+                });
+            }
+        }).on_decrement({
+            let entity = entity.clone();
+            move |window, cx| {
+                _ = entity.update(cx, |this, cx| {
+                    this.stepper_value = (this.stepper_value - 1).max(0);
+                    let value = this.stepper_value;
+                    this.stepper_input.update(cx, |state, cx| {
+                        state.set_value(value.to_string(), window, cx);
+                    });
+                    cx.notify();
+                });
+            }
+        }),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="stepper/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacStepper};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacStepper::new("stepper-xl").size(MacControlSize::ExtraLarge))
+    .child(MacStepper::new("stepper-l").size(MacControlSize::Large))
+    .child(MacStepper::new("stepper-r"))
+    .child(MacStepper::new("stepper-s").size(MacControlSize::Small))
+    .child(MacStepper::new("stepper-m").size(MacControlSize::Mini))
+```
+
 ## Disabled
 
 <ComponentPreview name="stepper/Disabled" />
+
+```rust
+MacStepper::new("stepper-d").disabled(true)
+```
 
 ## API
 

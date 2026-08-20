@@ -18,7 +18,7 @@ export const DocsTocFooter = ({
   <div className={cn("flex flex-col gap-2", className)}>
     {docId && (
       <a
-        href={`${LINK.GITHUB}/edit/${GITHUB.branch}/${DOCS_DIR}/${docId}`}
+        href={`${LINK.GITHUB}/edit/${GITHUB.branch}/docs/${DOCS_DIR}/${docId}`}
         target="_blank"
         rel="noopener noreferrer"
         className="text-muted-foreground flex items-center gap-1.5 text-[0.8rem] transition-colors hover:text-foreground [&_svg]:size-3"

@@ -5,11 +5,15 @@ description: A segmented control for switching between views.
 
 <ComponentPreview name="segmented-control/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::{MacSegment, MacSegmentedControl};
+```
 
+## Usage
+
+```rust
 MacSegmentedControl::new("view-toggle")
     .child(MacSegment::new("list").selected(true).child("List"))
     .child(MacSegment::new("grid").child("Grid"))
@@ -20,13 +24,79 @@ MacSegmentedControl::new("view-toggle")
 
 <ComponentPreview name="segmented-control/Multiple" />
 
+```rust
+use maccn::{MacSegment, MacSegmentedControl};
+
+MacSegmentedControl::new("segmented-multiple")
+    .w(px(220.))
+    .child(
+        MacSegment::new("seg-m-0")
+            .selected(selected.contains(&0))
+            .child("B")
+            .on_click({ ... }),
+    )
+    .child(
+        MacSegment::new("seg-m-1")
+            .selected(selected.contains(&1))
+            .child("I")
+            .on_click({ ... }),
+    )
+    .child(
+        MacSegment::new("seg-m-2")
+            .selected(selected.contains(&2))
+            .child("U")
+            .on_click({ ... }),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="segmented-control/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacSegment, MacSegmentedControl};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacSegmentedControl::new("segmented-xl")
+            .size(MacControlSize::ExtraLarge)
+            .w(px(320.))
+            .child(MacSegment::new("seg-xl-0").selected(true).child("Left"))
+            .child(MacSegment::new("seg-xl-1").child("Right")),
+    )
+    .child(
+        MacSegmentedControl::new("segmented-m")
+            .size(MacControlSize::Mini)
+            .w(px(140.))
+            .child(MacSegment::new("seg-m-0").selected(true).child("On"))
+            .child(MacSegment::new("seg-m-1").child("Off")),
+    )
+```
+
 ## Disabled
 
 <ComponentPreview name="segmented-control/Disabled" />
+
+```rust
+use gpui::div;
+use maccn::{MacSegment, MacSegmentedControl};
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(
+        MacSegmentedControl::new("segmented-d")
+            .w(px(220.))
+            .disabled(true)
+            .child(MacSegment::new("seg-d-0").selected(true).child("On"))
+            .child(MacSegment::new("seg-d-1").child("Off")),
+    )
+```
 
 ## API
 

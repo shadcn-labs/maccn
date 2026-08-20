@@ -17,11 +17,7 @@ const componentsFolder = source.pageTree.children.find(
     node.type === "folder" && isComponentsFolder(node)
 );
 
-const ComponentCard = ({
-  component,
-}: {
-  component: PageTreePage;
-}) => {
+const ComponentCard = ({ component }: { component: PageTreePage }) => {
   const name = getComponentNameFromUrl(component.url);
   const title = String(component.name);
 

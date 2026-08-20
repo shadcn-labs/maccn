@@ -5,11 +5,15 @@ description: A macOS push button with bordered, prominent, and destructive varia
 
 <ComponentPreview name="button/Basic" />
 
+## Import
+
+```rust
+use maccn::{ButtonVariant, MacButton, MacControlSize};
+```
+
 ## Usage
 
 ```rust
-use maccn::{MacButton, ButtonVariant, MacControlSize};
-
 MacButton::new("save").child("Save");
 
 MacButton::new("delete")
@@ -21,13 +25,81 @@ MacButton::new("delete")
 
 <ComponentPreview name="button/Variants" />
 
+```rust
+use gpui::div;
+use maccn::{ButtonVariant, MacButton};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacButton::new("btn-bordered").child("Bordered"))
+    .child(
+        MacButton::new("btn-prominent")
+            .variant(ButtonVariant::Prominent)
+            .child("Prominent"),
+    )
+    .child(
+        MacButton::new("btn-destructive")
+            .variant(ButtonVariant::Destructive)
+            .child("Delete"),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="button/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{ButtonVariant, MacButton, MacControlSize};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacButton::new("btn-xl")
+            .size(MacControlSize::ExtraLarge)
+            .variant(ButtonVariant::Prominent)
+            .child("Extra Large"),
+    )
+    .child(
+        MacButton::new("btn-l")
+            .size(MacControlSize::Large)
+            .child("Large"),
+    )
+    .child(MacButton::new("btn-r").child("Regular"))
+    .child(MacButton::new("btn-s").size(MacControlSize::Small).child("Small"))
+    .child(MacButton::new("btn-m").size(MacControlSize::Mini).child("Mini"))
+```
+
 ## Disabled
 
 <ComponentPreview name="button/Disabled" />
+
+```rust
+use gpui::div;
+use maccn::{ButtonVariant, MacButton};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacButton::new("btn-d1").disabled(true).child("Bordered"))
+    .child(
+        MacButton::new("btn-d2")
+            .variant(ButtonVariant::Prominent)
+            .disabled(true)
+            .child("Prominent"),
+    )
+    .child(
+        MacButton::new("btn-d3")
+            .variant(ButtonVariant::Destructive)
+            .disabled(true)
+            .child("Delete"),
+    )
+```
 
 ## API
 

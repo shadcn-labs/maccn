@@ -5,11 +5,15 @@ description: A text label with macOS typography styles.
 
 <ComponentPreview name="label/Basic" />
 
+## Import
+
+```rust
+use maccn::{LabelStyle, MacLabel};
+```
+
 ## Usage
 
 ```rust
-use maccn::{MacLabel, LabelStyle};
-
 MacLabel::new("title")
     .style(LabelStyle::Title1)
     .child("Hello World");
@@ -18,6 +22,27 @@ MacLabel::new("title")
 ## Variants
 
 <ComponentPreview name="label/Variants" />
+
+```rust
+use gpui::div;
+use maccn::{LabelStyle, MacLabel};
+
+div()
+    .flex()
+    .flex_col()
+    .gap_1()
+    .child(MacLabel::new("l-lt").style(LabelStyle::LargeTitle).child("Large Title"))
+    .child(MacLabel::new("l-t1").style(LabelStyle::Title1).child("Title 1"))
+    .child(MacLabel::new("l-t2").style(LabelStyle::Title2).child("Title 2"))
+    .child(MacLabel::new("l-t3").style(LabelStyle::Title3).child("Title 3"))
+    .child(MacLabel::new("l-hl").style(LabelStyle::Headline).child("Headline"))
+    .child(MacLabel::new("l-body").style(LabelStyle::Body).child("Body"))
+    .child(MacLabel::new("l-co").style(LabelStyle::Callout).child("Callout"))
+    .child(MacLabel::new("l-sh").style(LabelStyle::Subheadline).child("Subheadline"))
+    .child(MacLabel::new("l-fn").style(LabelStyle::Footnote).child("Footnote"))
+    .child(MacLabel::new("l-c1").style(LabelStyle::Caption1).child("Caption 1"))
+    .child(MacLabel::new("l-c2").style(LabelStyle::Caption2).child("Caption 2"))
+```
 
 ## API
 
@@ -30,19 +55,19 @@ MacLabel::new("title")
 
 ### LabelStyle
 
-| Variant       | Size  | Weight |
-| ------------- | ----- | ------ |
-| `LargeTitle`  | 26px  | Normal |
-| `Title1`      | 22px  | Normal |
-| `Title2`      | 17px  | Normal |
-| `Title3`      | 15px  | Normal |
-| `Headline`    | 13px  | Bold   |
-| `Body`        | 13px  | Normal |
-| `Callout`     | 12px  | Normal |
-| `Subheadline` | 11px  | Normal |
-| `Footnote`    | 10px  | Normal |
-| `Caption1`    | 10px  | Normal |
-| `Caption2`    | 10px  | Normal |
+| Variant       | Size | Weight |
+| ------------- | ---- | ------ |
+| `LargeTitle`  | 26px | Normal |
+| `Title1`      | 22px | Normal |
+| `Title2`      | 17px | Normal |
+| `Title3`      | 15px | Normal |
+| `Headline`    | 13px | Bold   |
+| `Body`        | 13px | Normal |
+| `Callout`     | 12px | Normal |
+| `Subheadline` | 11px | Normal |
+| `Footnote`    | 10px | Normal |
+| `Caption1`    | 10px | Normal |
+| `Caption2`    | 10px | Normal |
 
 ### Traits
 

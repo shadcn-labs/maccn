@@ -5,13 +5,15 @@ description: A search input with magnifier icon and clear button.
 
 <ComponentPreview name="search-field/Basic" />
 
+## Import
+
+```rust
+use maccn::MacSearchField;
+```
+
 ## Usage
 
 ```rust
-use gpui::Context as _;
-use gpui_base::input::InputState;
-use maccn::MacSearchField;
-
 let state = cx.new(|cx| InputState::new(window, cx).placeholder("Search"));
 
 MacSearchField::new("search", &state);
@@ -21,13 +23,57 @@ MacSearchField::new("search", &state);
 
 <ComponentPreview name="search-field/Clearing" />
 
+```rust
+use gpui::div;
+use maccn::{MacLabel, MacSearchField};
+use maccn::LabelStyle;
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(MacSearchField::new("search-clear", &state).w(px(220.)))
+    .child(
+        MacLabel::new("search-hint")
+            .style(LabelStyle::Footnote)
+            .secondary(true)
+            .child("Type text to reveal the clear button; press Escape to clear."),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="search-field/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacSearchField};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacSearchField::new("search-xl", &state)
+            .size(MacControlSize::ExtraLarge)
+            .w(px(240.)),
+    )
+    .child(
+        MacSearchField::new("search-s", &state)
+            .size(MacControlSize::Small)
+            .w(px(180.)),
+    )
+```
+
 ## Disabled
 
 <ComponentPreview name="search-field/Disabled" />
+
+```rust
+MacSearchField::new("search-d", &state)
+    .disabled(true)
+    .w(px(220.))
+```
 
 ## API
 

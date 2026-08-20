@@ -5,11 +5,15 @@ description: A macOS checkbox with checked, unchecked, and indeterminate states.
 
 <ComponentPreview name="checkbox/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::{MacCheckbox, MacCheckboxState};
+```
 
+## Usage
+
+```rust
 MacCheckbox::new("agree")
     .checked(true)
     .on_change(|state, _, _, _| {
@@ -22,13 +26,82 @@ MacCheckbox::new("agree")
 
 <ComponentPreview name="checkbox/States" />
 
+```rust
+use gpui::div;
+use maccn::{MacCheckbox, MacCheckboxState};
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(MacCheckbox::new("check-unchecked").child("Unchecked"))
+    .child(MacCheckbox::new("check-checked").checked(true).child("Checked"))
+    .child(
+        MacCheckbox::new("check-mixed")
+            .indeterminate(true)
+            .child("Indeterminate"),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="checkbox/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacCheckbox, MacControlSize};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacCheckbox::new("check-xl")
+            .size(MacControlSize::ExtraLarge)
+            .checked(true)
+            .child("XL"),
+    )
+    .child(
+        MacCheckbox::new("check-l")
+            .size(MacControlSize::Large)
+            .checked(true)
+            .child("L"),
+    )
+    .child(MacCheckbox::new("check-r").checked(true).child("R"))
+    .child(
+        MacCheckbox::new("check-s")
+            .size(MacControlSize::Small)
+            .checked(true)
+            .child("S"),
+    )
+    .child(
+        MacCheckbox::new("check-m")
+            .size(MacControlSize::Mini)
+            .checked(true)
+            .child("M"),
+    )
+```
+
 ## Disabled
 
 <ComponentPreview name="checkbox/Disabled" />
+
+```rust
+use gpui::div;
+use maccn::MacCheckbox;
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(MacCheckbox::new("check-d1").disabled(true).child("Disabled"))
+    .child(
+        MacCheckbox::new("check-d2")
+            .checked(true)
+            .disabled(true)
+            .child("Disabled checked"),
+    )
+```
 
 ## API
 
@@ -43,14 +116,14 @@ MacCheckbox::new("agree")
 
 ### State
 
-| Method                       | Description                              |
-| ---------------------------- | ---------------------------------------- |
-| `state(MacCheckboxState)`    | Sets the checkbox to any of the states.  |
-| `checked(bool)`              | Shortcut for `Checked` / `Unchecked`.    |
-| `indeterminate(bool)`        | Sets the mixed state when `true`.        |
+| Method                    | Description                             |
+| ------------------------- | --------------------------------------- |
+| `state(MacCheckboxState)` | Sets the checkbox to any of the states. |
+| `checked(bool)`           | Shortcut for `Checked` / `Unchecked`.   |
+| `indeterminate(bool)`     | Sets the mixed state when `true`.       |
 
 ### Events
 
-| Event       | Payload                                                    |
-| ----------- | ---------------------------------------------------------- |
-| `on_change` | `(MacCheckboxState, &ClickEvent, &mut Window, &mut App)`  |
+| Event       | Payload                                                  |
+| ----------- | -------------------------------------------------------- |
+| `on_change` | `(MacCheckboxState, &ClickEvent, &mut Window, &mut App)` |

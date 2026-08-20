@@ -5,11 +5,15 @@ description: An animated loading indicator with spinning blades.
 
 <ComponentPreview name="spinner/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::{MacSpinner, SpinnerSize};
+```
 
+## Usage
+
+```rust
 MacSpinner::new("loading");
 
 MacSpinner::new("loading-sm").size(SpinnerSize::Small);
@@ -18,6 +22,18 @@ MacSpinner::new("loading-sm").size(SpinnerSize::Small);
 ## Sizes
 
 <ComponentPreview name="spinner/Sizes" />
+
+```rust
+use gpui::div;
+use maccn::{MacSpinner, SpinnerSize};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(MacSpinner::new("spinner-r"))
+    .child(MacSpinner::new("spinner-s").size(SpinnerSize::Small))
+```
 
 ## API
 

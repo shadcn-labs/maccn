@@ -1,10 +1,4 @@
 {
   "title": "Overview",
-  "pages": [
-    "index",
-    "getting-started",
-    "theme",
-    "assets",
-    "changelog"
-  ]
+  "pages": ["index", "getting-started", "theme", "assets", "changelog"]
 }

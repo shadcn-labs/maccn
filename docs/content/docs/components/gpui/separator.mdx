@@ -5,12 +5,15 @@ description: A horizontal or vertical dividing line.
 
 <ComponentPreview name="separator/Basic" />
 
+## Import
+
+```rust
+use maccn::MacSeparator;
+```
+
 ## Usage
 
 ```rust
-use gpui::Axis;
-use maccn::MacSeparator;
-
 // Horizontal (default)
 MacSeparator::new("sep-h");
 
@@ -22,10 +25,24 @@ MacSeparator::new("sep-v").axis(Axis::Vertical);
 
 <ComponentPreview name="separator/Vertical" />
 
+```rust
+use gpui::{Axis, div, px};
+use maccn::MacSeparator;
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .h(px(32.))
+    .child(div().child("Left"))
+    .child(MacSeparator::new("sep-v").axis(Axis::Vertical))
+    .child(div().child("Right"))
+```
+
 ## API
 
 ### Props
 
-| Prop   | Type  | Default       |
-| ------ | ----- | ------------- |
-| `axis` | `Axis`| `Horizontal`  |
+| Prop   | Type   | Default      |
+| ------ | ------ | ------------ |
+| `axis` | `Axis` | `Horizontal` |

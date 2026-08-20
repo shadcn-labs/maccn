@@ -5,11 +5,15 @@ description: A dropdown button that opens a menu of selectable items.
 
 <ComponentPreview name="pop-up-button/Basic" />
 
-## Usage
+## Import
 
 ```rust
 use maccn::{MacPopUpButton, MacPopUpButtonItem};
+```
 
+## Usage
+
+```rust
 MacPopUpButton::new("format")
     .placeholder("Choose format")
     .items(vec![
@@ -25,33 +29,88 @@ MacPopUpButton::new("format")
 
 <ComponentPreview name="pop-up-button/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacPopUpButton};
+
+div()
+    .flex()
+    .items_center()
+    .gap_2()
+    .child(
+        MacPopUpButton::new("popup-xl")
+            .size(MacControlSize::ExtraLarge)
+            .placeholder("Extra Large"),
+    )
+    .child(
+        MacPopUpButton::new("popup-l")
+            .size(MacControlSize::Large)
+            .placeholder("Large"),
+    )
+    .child(MacPopUpButton::new("popup-r").placeholder("Regular"))
+    .child(
+        MacPopUpButton::new("popup-s")
+            .size(MacControlSize::Small)
+            .placeholder("Small"),
+    )
+    .child(
+        MacPopUpButton::new("popup-m")
+            .size(MacControlSize::Mini)
+            .placeholder("Mini"),
+    )
+```
+
 ## States
 
 <ComponentPreview name="pop-up-button/States" />
+
+```rust
+use gpui::div;
+use maccn::{MacPopUpButton, MacPopUpButtonItem};
+
+div()
+    .flex()
+    .flex_col()
+    .gap_2()
+    .child(
+        MacPopUpButton::new("popup-d")
+            .disabled(true)
+            .placeholder("Disabled"),
+    )
+    .child(
+        MacPopUpButton::new("popup-item-d")
+            .placeholder("With disabled item")
+            .items(vec![
+                MacPopUpButtonItem::new("Red"),
+                MacPopUpButtonItem::new("Green").disabled(true),
+                MacPopUpButtonItem::new("Blue"),
+            ]),
+    )
+```
 
 ## API
 
 ### MacPopUpButton Props
 
-| Prop          | Type             | Default   |
-| ------------- | ---------------- | --------- |
-| `size`        | `MacControlSize` | `Regular` |
-| `selected`    | `Option<usize>`  | `None`    |
-| `placeholder` | `SharedString`   | `"Select"`|
-| `disabled`    | `bool`           | `false`   |
+| Prop          | Type             | Default    |
+| ------------- | ---------------- | ---------- |
+| `size`        | `MacControlSize` | `Regular`  |
+| `selected`    | `Option<usize>`  | `None`     |
+| `placeholder` | `SharedString`   | `"Select"` |
+| `disabled`    | `bool`           | `false`    |
 
 ### MacPopUpButton Methods
 
-| Method                                        | Description                    |
-| --------------------------------------------- | ------------------------------ |
-| `item(MacPopUpButtonItem)`                    | Appends a single item.         |
+| Method                                                | Description            |
+| ----------------------------------------------------- | ---------------------- |
+| `item(MacPopUpButtonItem)`                            | Appends a single item. |
 | `items(impl IntoIterator<Item = MacPopUpButtonItem>)` | Replaces all items.    |
 
 ### MacPopUpButtonItem
 
-| Method                                              | Description                              |
-| --------------------------------------------------- | ---------------------------------------- |
-| `new(label: impl Into<SharedString>)`               | Creates a selectable item.               |
-| `disabled(bool)`                                    | Disables the item.                       |
-| `on_select(handler: Fn(&mut Window, &mut App))`     | Called when the item is selected.        |
-| `separator()`                                       | Creates a menu separator.                |
+| Method                                          | Description                       |
+| ----------------------------------------------- | --------------------------------- |
+| `new(label: impl Into<SharedString>)`           | Creates a selectable item.        |
+| `disabled(bool)`                                | Disables the item.                |
+| `on_select(handler: Fn(&mut Window, &mut App))` | Called when the item is selected. |
+| `separator()`                                   | Creates a menu separator.         |

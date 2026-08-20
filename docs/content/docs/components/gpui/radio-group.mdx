@@ -5,12 +5,15 @@ description: A group of mutually exclusive radio buttons.
 
 <ComponentPreview name="radio-group/Basic" />
 
+## Import
+
+```rust
+use maccn::{MacRadio, MacRadioGroup};
+```
+
 ## Usage
 
 ```rust
-use gpui::Axis;
-use maccn::{MacRadio, MacRadioGroup, MacControlSize};
-
 MacRadioGroup::new("options")
     .axis(Axis::Vertical)
     .gap(8.)
@@ -23,13 +26,57 @@ MacRadioGroup::new("options")
 
 <ComponentPreview name="radio-group/Horizontal" />
 
+```rust
+use gpui::Axis;
+use maccn::{MacRadio, MacRadioGroup};
+
+let selected = self.radio_selected;
+
+MacRadioGroup::new("radios-horizontal")
+    .axis(Axis::Horizontal)
+    .child(
+        MacRadio::new("radio-h-0")
+            .checked(selected == 0)
+            .on_change({ ... })
+            .child("Yes"),
+    )
+    .child(
+        MacRadio::new("radio-h-1")
+            .checked(selected == 1)
+            .on_change({ ... })
+            .child("No"),
+    )
+```
+
 ## Sizes
 
 <ComponentPreview name="radio-group/Sizes" />
 
+```rust
+use maccn::{MacControlSize, MacRadio, MacRadioGroup};
+
+MacRadioGroup::new("radios-sizes")
+    .size(MacControlSize::Small)
+    .child(MacRadio::new("radio-s").checked(true).child("Small"))
+    .child(MacRadio::new("radio-s2").child("Choice"))
+```
+
 ## Disabled
 
 <ComponentPreview name="radio-group/Disabled" />
+
+```rust
+use maccn::{MacRadio, MacRadioGroup};
+
+MacRadioGroup::new("radios-disabled")
+    .child(MacRadio::new("radio-d1").disabled(true).child("Disabled"))
+    .child(
+        MacRadio::new("radio-d2")
+            .checked(true)
+            .disabled(true)
+            .child("Disabled selected"),
+    )
+```
 
 ## API
 

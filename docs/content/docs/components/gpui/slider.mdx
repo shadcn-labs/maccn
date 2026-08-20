@@ -5,13 +5,15 @@ description: A draggable slider for selecting a value in a range.
 
 <ComponentPreview name="slider/Basic" />
 
+## Import
+
+```rust
+use maccn::MacSlider;
+```
+
 ## Usage
 
 ```rust
-use gpui::Context as _;
-use gpui_base::slider::SliderState;
-use maccn::MacSlider;
-
 let state = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(50.));
 
 MacSlider::new("volume", &state);
@@ -21,17 +23,108 @@ MacSlider::new("volume", &state);
 
 <ComponentPreview name="slider/Ticks" />
 
+```rust
+use gpui::Context as _;
+use gpui_base::slider::SliderState;
+use maccn::MacSlider;
+
+let state = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(50.));
+
+MacSlider::new("slider-ticks", &state);
+
+// Custom tick marks rendered below the slider
+div()
+    .relative()
+    .w_full()
+    .h(px(12.))
+    .children(ticks.into_iter().map(|t| {
+        div()
+            .absolute()
+            .left(relative(t / 100.))
+            .ml(px(-1.))
+            .w(px(2.))
+            .h(px(6.))
+            .rounded_full()
+            .bg(theme.label_quaternary)
+    }))
+```
+
 ## Vertical
 
 <ComponentPreview name="slider/Vertical" />
+
+```rust
+use gpui::Context as _;
+use gpui_base::slider::SliderState;
+use maccn::MacSlider;
+
+let state = cx.new(|_| SliderState::new().min(0.).max(100.).default_value(50.));
+let value = state.read(cx).value().start();
+let percentage = value / 100.;
+
+div()
+    .h(px(160.))
+    .flex()
+    .items_center()
+    .gap_3()
+    .child(
+        div()
+            .relative()
+            .w(px(6.))
+            .h_full()
+            .rounded_full()
+            .bg(theme.control_track)
+            .child(
+                div()
+                    .absolute()
+                    .bottom_0()
+                    .left_0()
+                    .right_0()
+                    .h(relative(percentage.clamp(0., 1.)))
+                    .rounded_full()
+                    .bg(theme.accent),
+            )
+            .child(
+                div()
+                    .absolute()
+                    .left(px(-5.))
+                    .bottom(relative(percentage.clamp(0., 1.)))
+                    .mb(px(-8.))
+                    .size(px(16.))
+                    .rounded_full()
+                    .bg(theme.slider_knob)
+                    .shadow(switch_thumb_shadow()),
+            ),
+    )
+    .child(div().text_color(theme.label_secondary).child(format!("{value:.0}%")))
+```
 
 ## Sizes
 
 <ComponentPreview name="slider/Sizes" />
 
+```rust
+use gpui::div;
+use maccn::{MacControlSize, MacSlider};
+
+div()
+    .w(px(260.))
+    .flex()
+    .flex_col()
+    .gap_3()
+    .child(MacSlider::new("slider-xl", &state).size(MacControlSize::ExtraLarge))
+    .child(MacSlider::new("slider-s", &state).size(MacControlSize::Small))
+```
+
 ## Disabled
 
 <ComponentPreview name="slider/Disabled" />
+
+```rust
+MacSlider::new("slider-disabled", &state)
+    .disabled(true)
+    .w(px(260.))
+```
 
 ## API
 
@@ -46,8 +139,8 @@ MacSlider::new("volume", &state);
 
 `MacSlider::new(id, &state)` requires an `Entity<SliderState>`.
 
-| Method                 | Description             |
-| ---------------------- | ----------------------- |
-| `min(f32)`             | Sets the minimum value. |
-| `max(f32)`             | Sets the maximum value. |
-| `default_value(f32)`   | Sets the initial value. |
+| Method               | Description             |
+| -------------------- | ----------------------- |
+| `min(f32)`           | Sets the minimum value. |
+| `max(f32)`           | Sets the maximum value. |
+| `default_value(f32)` | Sets the initial value. |
