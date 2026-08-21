@@ -20,7 +20,7 @@ export default function IndexPage() {
 
             <p className="max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Drop in controls with AppKit metrics, states, and keyboard
-              behavior including Liquid Glass refraction. Built on GPUI.
+              behavior. Built on GPUI.
             </p>
 
             <HomeCtas className="mt-4" />

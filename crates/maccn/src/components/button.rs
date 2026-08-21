@@ -1,11 +1,11 @@
 //! A macOS push button.
 
 use gpui::{
-    App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window,
-    px,
+    App, AnyElement, ClickEvent, ElementId, FocusHandle, InteractiveElement, IntoElement,
+    ParentElement, RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement,
+    Styled, Window, px,
 };
-use gpui_base::Button as BaseButton;
+use gpui_base::{Button as BaseButton, ButtonStyles, RoleOverride};
 
 use crate::{
     CONTROL_TEXT_WEIGHT, DISABLED_OPACITY, MacControlSize, control_height, control_radius,
@@ -82,6 +82,65 @@ impl MacButton {
             ..self
         }
     }
+
+    /// Overrides the accessibility role. The default is [`Role::Button`].
+    pub fn role(self, role: impl Into<RoleOverride>) -> Self {
+        Self {
+            inner: self.inner.role(role),
+            ..self
+        }
+    }
+
+    /// Sets the application-controlled selected presentation state.
+    ///
+    /// This supports persistent trigger presentation while an associated menu
+    /// or popover is open.
+    pub fn selected(self, selected: bool) -> Self {
+        Self {
+            inner: self.inner.selected(selected),
+            ..self
+        }
+    }
+
+    /// Defines application-owned styles for the button's semantic states.
+    pub fn styles(self, build: impl FnOnce(ButtonStyles) -> ButtonStyles) -> Self {
+        Self {
+            inner: self.inner.styles(build),
+            ..self
+        }
+    }
+
+    /// Sets the focus traversal index. The default is `0`.
+    pub fn tab_index(self, tab_index: isize) -> Self {
+        Self {
+            inner: self.inner.tab_index(tab_index),
+            ..self
+        }
+    }
+
+    /// Sets whether the button participates in keyboard focus traversal.
+    pub fn tab_stop(self, tab_stop: bool) -> Self {
+        Self {
+            inner: self.inner.tab_stop(tab_stop),
+            ..self
+        }
+    }
+
+    /// Uses a caller-owned focus handle instead of creating keyed state.
+    pub fn track_focus(self, focus_handle: &FocusHandle) -> Self {
+        Self {
+            inner: self.inner.track_focus(focus_handle),
+            ..self
+        }
+    }
+
+    /// Sets whether pressing the button moves focus onto it. The default is `true`.
+    pub fn focusable(self, focusable: bool) -> Self {
+        Self {
+            inner: self.inner.focusable(focusable),
+            ..self
+        }
+    }
 }
 
 impl Styled for MacButton {
@@ -103,6 +162,28 @@ impl InteractiveElement for MacButton {
 }
 
 impl StatefulInteractiveElement for MacButton {}
+
+impl gpui_base::Selectable for MacButton {
+    fn selected(self, selected: bool) -> Self {
+        Self {
+            inner: self.inner.selected(selected),
+            ..self
+        }
+    }
+
+    fn is_selected(&self) -> bool {
+        self.inner.is_selected()
+    }
+}
+
+impl gpui_base::Disableable for MacButton {
+    fn disabled(self, disabled: bool) -> Self {
+        Self {
+            inner: self.inner.disabled(disabled),
+            ..self
+        }
+    }
+}
 
 impl RenderOnce for MacButton {
     fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {

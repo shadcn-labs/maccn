@@ -3183,6 +3183,7 @@ dependencies = [
  "gpui",
  "gpui-base",
  "gpui_platform",
+ "js-sys",
  "log",
  "maccn",
  "tracing-wasm",

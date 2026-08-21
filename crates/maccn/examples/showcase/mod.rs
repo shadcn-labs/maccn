@@ -37,7 +37,6 @@ pub const COMPONENTS: &[&str] = &[
     "badge",
     "box",
     "separator",
-    "glass-panel",
     "help-button",
     "text-field",
     "secure-field",
@@ -72,7 +71,7 @@ fn detect_system_theme(cx: &mut gpui::App) {
     use maccn::{MaccnAppearance, MaccnTheme};
 
     let is_dark = web_sys::window()
-        .and_then(|w| w.match_media(prefers_color_scheme_dark_media_query()).ok())
+        .and_then(|w| w.match_media("(prefers-color-scheme: dark)").ok())
         .flatten()
         .map(|list| list.matches())
         .unwrap_or(false);
@@ -88,34 +87,19 @@ fn detect_system_theme(cx: &mut gpui::App) {
     });
 }
 
-#[cfg(target_family = "wasm")]
-fn prefers_color_scheme_dark_media_query() -> &'static str {
-    "(prefers-color-scheme: dark)"
-}
-
 impl Showcase {
     pub fn new(component: impl Into<String>, card_mode: bool, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let component = component.into();
 
-        // Auto-detect system theme on WASM
+        // Read the current theme to initialise the segmented control
         #[cfg(target_family = "wasm")]
-        {
-            use maccn::{MaccnAppearance, MaccnTheme};
-            let is_dark = web_sys::window()
-                .and_then(|w| w.match_media("(prefers-color-scheme: dark)").ok())
-                .flatten()
-                .map(|list| list.matches())
-                .unwrap_or(false);
-            let appearance = if is_dark {
-                MaccnAppearance::Dark
-            } else {
-                MaccnAppearance::Light
-            };
-            cx.set_global(match appearance {
-                MaccnAppearance::Light => MaccnTheme::light(),
-                MaccnAppearance::Dark => MaccnTheme::dark(),
-            });
-        }
+        let segmented_index = {
+            use maccn::MaccnAppearance;
+            let appearance = cx.global::<maccn::MaccnTheme>().appearance;
+            if appearance == MaccnAppearance::Dark { 1 } else { 0 }
+        };
+        #[cfg(not(target_family = "wasm"))]
+        let segmented_index = 0;
 
         let input = cx.new(|cx| {
             InputState::new(window, cx)
@@ -162,7 +146,7 @@ impl Showcase {
             switch_checked: true,
             box_bluetooth_checked: false,
             toggle_checked: true,
-            segmented_index: 0,
+            segmented_index,
             stepper_value: 1,
             popup_selected: None,
             popup_open: false,
@@ -263,7 +247,6 @@ impl Render for Showcase {
                 "box" => self.box_example(cx).into_any_element(),
                 "button" => self.button().into_any_element(),
                 "checkbox" => self.checkbox(cx).into_any_element(),
-                "glass-panel" => self.glass_panel().into_any_element(),
                 "help-button" => self.help_button().into_any_element(),
                 "label" => self.label().into_any_element(),
                 "pop-up-button" => self.pop_up_button(cx).into_any_element(),
@@ -379,12 +362,25 @@ pub fn run(app: Application, component: impl Into<String>) {
 }
 
 #[cfg(target_family = "wasm")]
-pub fn run_embedded(app: Application, component: impl Into<String>, card_mode: bool) -> gpui::ApplicationHandle {
+pub fn run_embedded(app: Application, component: impl Into<String>, card_mode: bool, dark: Option<bool>) -> gpui::ApplicationHandle {
     let component = component.into();
     app.run_embedded(move |cx: &mut App| {
         maccn::init(cx);
-        // Auto-detect system theme before opening the window
-        detect_system_theme(cx);
+        // Apply the embedding page's theme if provided, otherwise detect system
+        if let Some(is_dark) = dark {
+            use maccn::{MaccnAppearance, MaccnTheme};
+            let appearance = if is_dark {
+                MaccnAppearance::Dark
+            } else {
+                MaccnAppearance::Light
+            };
+            cx.set_global(match appearance {
+                MaccnAppearance::Light => MaccnTheme::light(),
+                MaccnAppearance::Dark => MaccnTheme::dark(),
+            });
+        } else {
+            detect_system_theme(cx);
+        }
         cx.text_system()
             .add_fonts(vec![std::borrow::Cow::Borrowed(
                 include_bytes!("./fonts/Inter-Regular.ttf").as_slice(),

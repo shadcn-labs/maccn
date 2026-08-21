@@ -1,10 +1,13 @@
-import { useEffect, type RefObject } from "react";
+import { useEffect } from "react";
+import type { RefObject } from "react";
 
 /**
  * Watches the `<html>` class for theme changes and reloads the iframe so the
  * WASM demo picks up the new colour scheme instantly.
  */
-export const useThemeIframeSync = (ref: RefObject<HTMLIFrameElement | null>) => {
+export const useThemeIframeSync = (
+  ref: RefObject<HTMLIFrameElement | null>
+) => {
   useEffect(() => {
     const html = document.documentElement;
     let lastClass = html.className;
@@ -14,7 +17,8 @@ export const useThemeIframeSync = (ref: RefObject<HTMLIFrameElement | null>) => 
         lastClass = html.className;
         const iframe = ref.current;
         if (iframe) {
-          iframe.src = iframe.src;
+          const currentSrc = iframe.src;
+          iframe.src = currentSrc;
         }
       }
     });

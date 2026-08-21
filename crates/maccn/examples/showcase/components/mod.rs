@@ -3,11 +3,11 @@
 use super::Showcase;
 use gpui::{AnyElement, Axis, Context, IntoElement, ParentElement as _, Styled as _, div, px, relative};
 use maccn::{
-    ButtonVariant, GlassMaterial, LabelStyle, MacBadge, MacBox, MacButton, MacCheckbox,
-    MacCheckboxState, MacControlSize, MacGlassPanel, MacHelpButton, MacLabel, MacPopUpButton,
-    MacPopUpButtonItem, MacProgress, MacRadio, MacRadioGroup, MacSearchField, MacSecureField,
-    MacSegment, MacSegmentedControl, MacSeparator, MacSlider, MacSpinner, MacStepper, MacSwitch,
-    MacTextField, ProgressSize, SpinnerSize,
+    ButtonVariant, LabelStyle, MacBadge, MacBox, MacButton, MacCheckbox, MacCheckboxState,
+    MacControlSize, MacHelpButton, MacLabel, MacPopUpButton, MacPopUpButtonItem, MacProgress,
+    MacRadio, MacRadioGroup, MacSearchField, MacSecureField, MacSegment, MacSegmentedControl,
+    MacSeparator, MacSlider, MacSpinner, MacStepper, MacSwitch, MacTextField, ProgressSize,
+    SpinnerSize,
 };
 
 fn section(title: &str) -> impl IntoElement {
@@ -225,36 +225,6 @@ impl Showcase {
                             .size(MacControlSize::Mini)
                             .checked(true)
                             .child("M"),
-                    ),
-            )
-    }
-
-    pub(super) fn glass_panel(&self) -> impl IntoElement {
-        div()
-            .w_80()
-            .flex()
-            .flex_col()
-            .items_start()
-            .gap_2()
-            .child(section("Glass Panel"))
-            .child(
-                div()
-                    .flex()
-                    .items_center()
-                    .gap_2()
-                    .child(
-                        MacGlassPanel::new("glass-1")
-                            .material(GlassMaterial::Regular)
-                            .w(px(180.))
-                            .h(px(120.))
-                            .child(div().text_sm().child("Regular")),
-                    )
-                    .child(
-                        MacGlassPanel::new("glass-2")
-                            .material(GlassMaterial::Clear)
-                            .w(px(180.))
-                            .h(px(120.))
-                            .child(div().text_sm().child("Clear")),
                     ),
             )
     }
@@ -1068,30 +1038,6 @@ impl Showcase {
                 .child(MacSeparator::new("card-sep"))
                 .child(MacLabel::new("card-sep-below").child("Wallpaper"))
                 .into_any_element(),
-            "glass-panel" => {
-                let theme = maccn::MaccnTheme::global(cx);
-                div()
-                    .relative()
-                    .w(px(180.))
-                    .h(px(120.))
-                    .child(maccn::stage_grid_bg(theme.label_quaternary).w_full().h_full())
-                    .child(
-                        div()
-                            .absolute()
-                            .inset_0()
-                            .flex()
-                            .items_center()
-                            .justify_center()
-                            .child(
-                                MacGlassPanel::new("card-glass")
-                                    .material(GlassMaterial::Clear)
-                                    .w(px(120.))
-                                    .h(px(64.))
-                                    .child(div().text_sm().child("Media controls")),
-                            ),
-                    )
-                    .into_any_element()
-            }
             "help-button" => MacHelpButton::new("card-help").into_any_element(),
             "text-field" => MacTextField::new("card-field", &self.input)
                 .w(px(180.))
@@ -1102,6 +1048,69 @@ impl Showcase {
             "search-field" => MacSearchField::new("card-search", &self.search_input)
                 .w(px(180.))
                 .into_any_element(),
+            "appearance-picker" => {
+                let index = self.segmented_index;
+                MacSegmentedControl::new("card-appearance")
+                    .size(MacControlSize::Small)
+                    .w(px(160.))
+                    .child(
+                        MacSegment::new("card-appearance-light")
+                            .selected(index == 0)
+                            .child("Light")
+                            .on_click({
+                                let entity = cx.entity().downgrade();
+                                move |_, _window, cx| {
+                                    _ = entity.update(cx, |this, cx| {
+                                        this.segmented_index = 0;
+                                        cx.notify();
+                                    });
+                                    #[cfg(target_family = "wasm")]
+                                    {
+                                        let msg = js_sys::JSON::parse(
+                                            &r#"{"type":"theme-change","theme":"light"}"#
+                                        )
+                                        .unwrap();
+                                        if let Some(parent) = web_sys::window()
+                                            .unwrap()
+                                            .parent()
+                                            .unwrap()
+                                        {
+                                            parent.post_message(&msg, "*").ok();
+                                        }
+                                    }
+                                }
+                            }),
+                    )
+                    .child(
+                        MacSegment::new("card-appearance-dark")
+                            .selected(index == 1)
+                            .child("Dark")
+                            .on_click({
+                                let entity = cx.entity().downgrade();
+                                move |_, _window, cx| {
+                                    _ = entity.update(cx, |this, cx| {
+                                        this.segmented_index = 1;
+                                        cx.notify();
+                                    });
+                                    #[cfg(target_family = "wasm")]
+                                    {
+                                        let msg = js_sys::JSON::parse(
+                                            &r#"{"type":"theme-change","theme":"dark"}"#
+                                        )
+                                        .unwrap();
+                                        if let Some(parent) = web_sys::window()
+                                            .unwrap()
+                                            .parent()
+                                            .unwrap()
+                                        {
+                                            parent.post_message(&msg, "*").ok();
+                                        }
+                                    }
+                                }
+                            }),
+                    )
+                    .into_any_element()
+            }
             _ => self.button().into_any_element(),
         }
     }
@@ -2028,7 +2037,6 @@ impl Showcase {
             ("checkbox", "States") => self.checkbox_states().into_any_element(),
             ("checkbox", "Sizes") => self.checkbox_sizes().into_any_element(),
             ("checkbox", "Disabled") => self.checkbox_disabled().into_any_element(),
-            ("glass-panel", "Basic") => self.glass_panel().into_any_element(),
             ("help-button", "Basic") => self.help_button_basic().into_any_element(),
             ("help-button", "Sizes") => self.help_button_sizes().into_any_element(),
             ("help-button", "Disabled") => self.help_button_disabled().into_any_element(),

@@ -1,8 +1,9 @@
 //! macOS radio buttons and radio groups.
 
 use gpui::{
-    App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window,
+    App, AnyElement, ClickEvent, ElementId, FocusHandle, InteractiveElement, IntoElement,
+    ParentElement, RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement,
+    Styled, Window,
     Axis, div, prelude::FluentBuilder as _, px,
 };
 use gpui_base::{Radio as BaseRadio, RadioGroup as BaseRadioGroup};
@@ -86,6 +87,30 @@ impl MacRadio {
             ..self
         }
     }
+
+    /// Sets the focus traversal index. The default is `0`.
+    pub fn tab_index(self, tab_index: isize) -> Self {
+        Self {
+            inner: self.inner.tab_index(tab_index),
+            ..self
+        }
+    }
+
+    /// Sets whether the radio participates in keyboard focus traversal.
+    pub fn tab_stop(self, tab_stop: bool) -> Self {
+        Self {
+            inner: self.inner.tab_stop(tab_stop),
+            ..self
+        }
+    }
+
+    /// Uses a caller-owned focus handle instead of creating keyed state.
+    pub fn track_focus(self, focus_handle: &FocusHandle) -> Self {
+        Self {
+            inner: self.inner.track_focus(focus_handle),
+            ..self
+        }
+    }
 }
 
 impl Styled for MacRadio {
@@ -107,6 +132,16 @@ impl InteractiveElement for MacRadio {
 }
 
 impl StatefulInteractiveElement for MacRadio {}
+
+impl gpui_base::Disableable for MacRadio {
+    fn disabled(self, disabled: bool) -> Self {
+        Self {
+            inner: self.inner.disabled(disabled),
+            disabled,
+            ..self
+        }
+    }
+}
 
 impl RenderOnce for MacRadio {
     fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {

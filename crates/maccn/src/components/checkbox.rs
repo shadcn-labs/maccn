@@ -1,12 +1,13 @@
 //! A macOS checkbox.
 
 use gpui::{
-    App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window, div,
+    App, AnyElement, ClickEvent, ElementId, FocusHandle, InteractiveElement, IntoElement,
+    ParentElement, RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement,
+    Styled, Window, div,
     prelude::FluentBuilder as _, px,
 };
 use gpui_base::{
-    Checkbox as BaseCheckbox, CheckboxIndicator, CheckboxState,
+    Checkbox as BaseCheckbox, CheckboxIndicator, CheckboxState, CheckboxStyles, RoleOverride,
 };
 
 use crate::{
@@ -108,6 +109,46 @@ impl MacCheckbox {
             ..self
         }
     }
+
+    /// Overrides the accessibility role. The default is [`Role::CheckBox`].
+    pub fn role(self, role: impl Into<RoleOverride>) -> Self {
+        Self {
+            inner: self.inner.role(role),
+            ..self
+        }
+    }
+
+    /// Defines application-owned styles for the checkbox's semantic states.
+    pub fn styles(self, build: impl FnOnce(CheckboxStyles) -> CheckboxStyles) -> Self {
+        Self {
+            inner: self.inner.styles(build),
+            ..self
+        }
+    }
+
+    /// Sets the focus traversal index. The default is `0`.
+    pub fn tab_index(self, tab_index: isize) -> Self {
+        Self {
+            inner: self.inner.tab_index(tab_index),
+            ..self
+        }
+    }
+
+    /// Sets whether the checkbox participates in keyboard focus traversal.
+    pub fn tab_stop(self, tab_stop: bool) -> Self {
+        Self {
+            inner: self.inner.tab_stop(tab_stop),
+            ..self
+        }
+    }
+
+    /// Uses a caller-owned focus handle instead of creating keyed state.
+    pub fn track_focus(self, focus_handle: &FocusHandle) -> Self {
+        Self {
+            inner: self.inner.track_focus(focus_handle),
+            ..self
+        }
+    }
 }
 
 impl Styled for MacCheckbox {
@@ -129,6 +170,15 @@ impl InteractiveElement for MacCheckbox {
 }
 
 impl StatefulInteractiveElement for MacCheckbox {}
+
+impl gpui_base::Disableable for MacCheckbox {
+    fn disabled(self, disabled: bool) -> Self {
+        Self {
+            inner: self.inner.disabled(disabled),
+            ..self
+        }
+    }
+}
 
 impl RenderOnce for MacCheckbox {
     fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {

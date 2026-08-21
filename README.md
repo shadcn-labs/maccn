@@ -24,7 +24,7 @@
 
 ## Features
 
-- 🍎 **19 components** — Badge, Box, Button, Checkbox, Glass Panel, Help Button, and more, with polished interactions and productive defaults.
+- 🍎 **18 components** — Badge, Box, Button, Checkbox, Help Button, and more, with polished interactions and productive defaults.
 - 📏 **Five control sizes** — `mini`, `small`, `regular`, `large`, and `extraLarge` on every control that has them
 - 🌗 **Light and dark** — driven by a single theme on any element
 - 🎨 **System accents** — every control follows one accent color

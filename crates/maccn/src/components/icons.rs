@@ -103,25 +103,6 @@ pub fn spinner_svg(color: Hsla, size: f32, angle_deg: f32) -> impl IntoElement {
     spinner_img(color, size, angle_deg)
 }
 
-/// A repeating grid pattern used behind glass panels in preview cards.
-pub fn grid_bg(color: Hsla) -> gpui::Img {
-    let body = format!(
-        r#"<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="{color}" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/>"#,
-        color = color_hex(color),
-    );
-    img(svg(body))
-}
-
-/// The 24px grid stage used behind the Glass Panel card preview, offset by
-/// half a cell so no line lands on the edge — matching macvue's stage.
-pub fn stage_grid_bg(color: Hsla) -> gpui::Img {
-    let body = format!(
-        r#"<defs><pattern id="g" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="translate(-12 -12)"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="{color}" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/>"#,
-        color = color_hex(color),
-    );
-    img(svg(body))
-}
-
 /// The raw image element used by [`spinner_svg`] and the animated spinner.
 pub fn spinner_img(color: Hsla, size: f32, angle_deg: f32) -> gpui::Img {
     let mut blades = String::new();

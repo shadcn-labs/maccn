@@ -1,11 +1,12 @@
 //! A macOS switch.
 
 use gpui::{
-    App, AnyElement, ClickEvent, ElementId, InteractiveElement, IntoElement, ParentElement,
-    RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement, Styled, Window, div,
+    App, AnyElement, ClickEvent, ElementId, FocusHandle, InteractiveElement, IntoElement,
+    ParentElement, RenderOnce, SharedString, StatefulInteractiveElement, StyleRefinement,
+    Styled, Window, div,
     prelude::FluentBuilder as _, px,
 };
-use gpui_base::{Switch as BaseSwitch, SwitchThumb, SwitchTrack};
+use gpui_base::{Switch as BaseSwitch, SwitchStyles, SwitchThumb, SwitchTrack};
 
 use crate::{MacControlSize, control_text_size, theme::ThemeExt as _, CONTROL_TEXT_WEIGHT};
 
@@ -104,6 +105,38 @@ impl MacSwitch {
             ..self
         }
     }
+
+    /// Defines application-owned styles for the switch's semantic states.
+    pub fn styles(self, build: impl FnOnce(SwitchStyles) -> SwitchStyles) -> Self {
+        Self {
+            inner: self.inner.styles(build),
+            ..self
+        }
+    }
+
+    /// Sets the focus traversal index. The default is `0`.
+    pub fn tab_index(self, tab_index: isize) -> Self {
+        Self {
+            inner: self.inner.tab_index(tab_index),
+            ..self
+        }
+    }
+
+    /// Sets whether the switch participates in keyboard focus traversal.
+    pub fn tab_stop(self, tab_stop: bool) -> Self {
+        Self {
+            inner: self.inner.tab_stop(tab_stop),
+            ..self
+        }
+    }
+
+    /// Uses a caller-owned focus handle instead of creating keyed state.
+    pub fn track_focus(self, focus_handle: &FocusHandle) -> Self {
+        Self {
+            inner: self.inner.track_focus(focus_handle),
+            ..self
+        }
+    }
 }
 
 impl Styled for MacSwitch {
@@ -125,6 +158,16 @@ impl InteractiveElement for MacSwitch {
 }
 
 impl StatefulInteractiveElement for MacSwitch {}
+
+impl gpui_base::Disableable for MacSwitch {
+    fn disabled(self, disabled: bool) -> Self {
+        Self {
+            inner: self.inner.disabled(disabled),
+            disabled,
+            ..self
+        }
+    }
+}
 
 impl RenderOnce for MacSwitch {
     fn render(self, _window: &mut Window, cx: &mut App) -> impl IntoElement {

@@ -280,6 +280,34 @@ impl MaccnTheme {
     }
 }
 
+impl MaccnTheme {
+    /// Returns a copy of the theme with a new accent color and all
+    /// accent-derived fields recomputed from it.
+    pub fn with_accent(self, accent: Hsla) -> Self {
+        Self {
+            accent,
+            accent_pressed: Hsla {
+                l: (accent.l - 0.04).max(0.0),
+                ..accent
+            },
+            accent_pressed_soft: Hsla {
+                l: (accent.l - 0.02).max(0.0),
+                ..accent
+            },
+            accent_disabled: Hsla { a: 0.25, ..accent },
+            accent_disabled_strong: Hsla { a: 0.50, ..accent },
+            segmented_on_pressed: Hsla {
+                l: (accent.l - 0.04).max(0.0),
+                ..accent
+            },
+            focus_ring: Hsla { a: 0.25, ..accent },
+            focus_ring_border: Hsla { a: 0.15, ..accent },
+            selection_bg: accent,
+            ..self
+        }
+    }
+}
+
 /// Convenience access to the active theme through an application context.
 pub trait ThemeExt {
     fn theme(&self) -> MaccnTheme;

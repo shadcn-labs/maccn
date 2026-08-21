@@ -14,6 +14,9 @@ pub use components::*;
 pub use sizes::MacControlSize;
 pub use theme::{MaccnAppearance, MaccnTheme, ThemeExt};
 
+// Re-export gpui-base traits for convenience.
+pub use gpui_base::{Disableable, FocusableExt, RoleOverride, Selectable};
+
 use gpui::App;
 
 /// Initializes global infrastructure owned by maccn.
