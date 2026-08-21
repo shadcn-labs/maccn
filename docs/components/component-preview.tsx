@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type { ReactNode } from "react";
+
+import { useThemeIframeSync } from "@/hooks/use-theme-iframe-sync";
 
 /**
  * Embeds the interactive WASM demo for a maccn component.
@@ -20,23 +22,7 @@ export const ComponentPreview = ({
   const slug = name ?? component ?? "";
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    let lastClass = html.className;
-
-    const observer = new MutationObserver(() => {
-      if (html.className !== lastClass) {
-        lastClass = html.className;
-        const iframe = iframeRef.current;
-        if (iframe) {
-          iframe.src = `${iframe.src}`;
-        }
-      }
-    });
-
-    observer.observe(html, { attributeFilter: ["class"], attributes: true });
-    return () => observer.disconnect();
-  }, []);
+  useThemeIframeSync(iframeRef);
 
   return (
     <div className="mv-preview mt-4 first:mt-0">

@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 
+import { useThemeIframeSync } from "@/hooks/use-theme-iframe-sync";
 import { isComponentsFolder } from "@/lib/docs";
 import type { PageTreeFolder, PageTreePage } from "@/lib/page-tree";
 import {
@@ -20,11 +22,14 @@ const componentsFolder = source.pageTree.children.find(
 const ComponentCard = ({ component }: { component: PageTreePage }) => {
   const name = getComponentNameFromUrl(component.url);
   const title = String(component.name);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  useThemeIframeSync(iframeRef);
 
   return (
     <div className="rounded-lg bg-code p-1 transition-colors hover:bg-muted/80">
       <div className="flex h-35 items-center justify-center overflow-hidden rounded-md border bg-muted/50">
         <iframe
+          ref={iframeRef}
           src={`/examples?component=${encodeURIComponent(name)}&mode=card`}
           title={`${name} preview`}
           className="h-full w-full border-none"

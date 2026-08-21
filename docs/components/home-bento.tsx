@@ -1,166 +1,390 @@
 "use client";
 
+import { useRef } from "react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+
+import { ROUTES } from "@/constants/routes";
+import { useFeedback } from "@/hooks/use-feedback";
+import { useMounted } from "@/hooks/use-mounted";
+import { useThemeIframeSync } from "@/hooks/use-theme-iframe-sync";
 import { cn } from "@/lib/utils";
 
-const BentoCard = ({
+/**
+ * Column spans per tile width, mirroring the reference grid: 12 columns on
+ * desktop, 6 on tablet, 2 on phones.
+ */
+const SPAN = {
+  // `last:` mirrors the reference's `.mv-tile--w2:last-child`: with an odd
+  // count of half-width tiles the narrow layouts would otherwise end on a hole.
+  2: "col-span-1 last:col-span-2 md:col-span-3 md:last:col-span-6 lg:col-span-2 lg:last:col-span-2",
+  3: "col-span-2 md:col-span-3 lg:col-span-3",
+  4: "col-span-2 md:col-span-6 lg:col-span-4",
+  6: "col-span-2 md:col-span-6 lg:col-span-6",
+} as const;
+
+/**
+ * The WASM canvases paint macOS window chrome from the OS colour scheme, not
+ * from the docs theme, so any chrome drawn in the DOM next to one has to key
+ * off `prefers-color-scheme` too or the seam shows. Values are
+ * `MaccnTheme::{light,dark}` in `crates/maccn/src/theme.rs`.
+ */
+const OS_SURFACE =
+  "bg-[#f6f6f6] [@media(prefers-color-scheme:dark)]:bg-[#1e1e1e]";
+const OS_SEPARATOR =
+  "border-black/10 [@media(prefers-color-scheme:dark)]:border-white/10";
+const OS_LABEL_SECONDARY =
+  "text-black/50 [@media(prefers-color-scheme:dark)]:text-white/55";
+
+/** `MaccnTheme::light().accent` / `MaccnTheme::dark().accent`. */
+const ACCENT_TEXT = "text-[#0088ff] dark:text-[#0091ff]";
+
+/** `maccn::theme::accent`, in the order the macOS Appearance pane lists them. */
+const ACCENTS = [
+  { color: "#0088FF", name: "Blue" },
+  { color: "#CB30E0", name: "Purple" },
+  { color: "#FF2D55", name: "Pink" },
+  { color: "#FF383C", name: "Red" },
+  { color: "#FF8D28", name: "Orange" },
+  { color: "#FFCC00", name: "Yellow" },
+  { color: "#34C759", name: "Green" },
+  { color: "#8E8E93", name: "Graphite" },
+];
+
+/** The keynote-stage backdrop shared by the two showcase tiles. */
+const STAGE_BACKGROUND = {
+  background: [
+    "radial-gradient(120% 90% at 20% 0%, rgb(94 63 255 / 0.34), transparent 62%)",
+    "radial-gradient(110% 80% at 88% 100%, rgb(10 132 255 / 0.30), transparent 58%)",
+    "#0a0a0d",
+  ].join(","),
+};
+
+const Tile = ({
+  span,
+  rows,
   className,
   children,
   ...props
-}: React.ComponentProps<"div">) => (
-  <div
+}: React.ComponentProps<"article"> & {
+  span: keyof typeof SPAN;
+  rows?: 2;
+}) => (
+  <article
     className={cn(
-      "group relative flex flex-col justify-end overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-colors",
+      "flex min-w-0 flex-col justify-center gap-1.5 overflow-hidden rounded-[18px] border bg-card px-5.5 py-5 text-center transition-colors",
+      SPAN[span],
+      rows === 2 && "row-span-2",
       className
     )}
     {...props}
   >
     {children}
-  </div>
+  </article>
 );
 
-const BentoIframe = ({
-  slug,
-  className,
-}: {
-  slug: string;
-  className?: string;
-}) => (
-  <iframe
-    src={`/examples?component=${encodeURIComponent(slug)}`}
-    title={`${slug} demo`}
-    allow="cross-origin-isolated"
-    className={cn("pointer-events-none h-full w-full border-0", className)}
-  />
+const TileTop = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-xs leading-[1.35] text-muted-foreground">{children}</p>
 );
 
-const StatCard = ({
-  label,
-  value,
-  description,
+const TileLabel = ({
   className,
+  children,
 }: {
-  label: string;
-  value: string;
-  description: string;
   className?: string;
+  children: React.ReactNode;
 }) => (
-  <BentoCard
-    className={cn("items-center justify-center p-6 text-center", className)}
+  <p className={cn("text-xs leading-[1.35] text-muted-foreground", className)}>
+    {children}
+  </p>
+);
+
+const TileFigure = ({
+  small,
+  children,
+}: {
+  small?: boolean;
+  children: React.ReactNode;
+}) => (
+  <strong
+    className={cn(
+      "block font-bold leading-none tracking-[-0.05em]",
+      ACCENT_TEXT,
+      small ? "text-[clamp(28px,3vw,42px)]" : "text-[clamp(38px,4.4vw,62px)]"
+    )}
   >
-    <div className="text-sm text-muted-foreground">{label}</div>
-    <div className="mt-1 text-5xl font-bold tracking-tight">{value}</div>
-    <div className="mt-1 text-sm text-muted-foreground">{description}</div>
-  </BentoCard>
+    {children}
+  </strong>
 );
+
+/**
+ * A live WASM control, in the showcase's `card` mode: one control, centred, no
+ * chrome. Lazy so the 18 MB module is only instantiated once a tile is near
+ * the viewport.
+ */
+const TileDemo = ({
+  component,
+  className,
+  title,
+}: {
+  component: string;
+  className?: string;
+  title: string;
+}) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  useThemeIframeSync(iframeRef);
+
+  return (
+    <iframe
+      ref={iframeRef}
+      allow="cross-origin-isolated"
+      className={cn("block h-full w-full border-0", className)}
+      loading="lazy"
+      src={`/examples?component=${encodeURIComponent(component)}&mode=card`}
+      tabIndex={-1}
+      title={title}
+    />
+  );
+};
+
+/**
+ * A control tile: the canvas fills the tile edge-to-edge — the demo paints its
+ * own window background, so no card padding may show around it — and the
+ * caption is overlaid on top of it.
+ */
+const ControlTile = ({
+  component,
+  label,
+  span,
+}: {
+  component: string;
+  label: string;
+  span: keyof typeof SPAN;
+}) => (
+  <Tile className="relative p-0" span={span}>
+    <TileDemo component={component} title={`${label} demo`} />
+    <TileLabel
+      className={cn(
+        "pointer-events-none absolute inset-x-0 bottom-3",
+        OS_LABEL_SECONDARY
+      )}
+    >
+      {label}
+    </TileLabel>
+  </Tile>
+);
+
+/** Light/Dark, wired to the real site theme rather than faked. */
+const AppearanceTile = () => {
+  const { resolvedTheme, setTheme } = useTheme();
+  const isMounted = useMounted();
+  const feedbackOn = useFeedback({ sound: "toggleOn" });
+  const feedbackOff = useFeedback({ sound: "toggleOff" });
+
+  return (
+    <Tile className="items-center gap-4" span={3}>
+      <div
+        aria-label="Appearance"
+        className="inline-flex items-center gap-0.5 rounded-lg bg-muted p-0.5"
+        role="radiogroup"
+      >
+        {(["light", "dark"] as const).map((appearance) => {
+          const isActive = isMounted && resolvedTheme === appearance;
+
+          return (
+            <button
+              aria-checked={isActive}
+              className={cn(
+                "rounded-md px-4 py-1 text-sm capitalize transition-colors",
+                isActive
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              key={appearance}
+              onClick={() => {
+                if (appearance === "dark") {
+                  feedbackOff();
+                } else {
+                  feedbackOn();
+                }
+                setTheme(appearance);
+              }}
+              role="radio"
+              type="button"
+            >
+              {appearance}
+            </button>
+          );
+        })}
+      </div>
+      <TileLabel>Both appearances, one token set</TileLabel>
+    </Tile>
+  );
+};
 
 export const HomeBento = () => (
-  <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
-    {/* Row 1 */}
-    <BentoCard className="col-span-1 items-center justify-center overflow-hidden p-0">
-      <BentoIframe slug="switch/Basic" />
-    </BentoCard>
-
-    <StatCard label="Ships with" value="19" description="Components" />
-
-    <StatCard
-      label="Every control in"
-      value="5"
-      description="Sizes, mini to extraLarge"
+  <section aria-labelledby="home-bento-title" className="relative py-16">
+    {/* Colour, then grain over it: the flat gradient alone reads as a CSS
+        wash, and the tiles need something to sit on. */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-100"
+      style={{
+        background: [
+          "radial-gradient(46% 40% at 22% 28%, rgb(94 63 255 / 0.18), transparent 72%)",
+          "radial-gradient(44% 42% at 78% 60%, rgb(10 132 255 / 0.16), transparent 72%)",
+          "radial-gradient(38% 34% at 50% 100%, rgb(191 90 242 / 0.12), transparent 74%)",
+        ].join(","),
+      }}
+    />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 opacity-[0.035]"
+      style={{
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E\")",
+      }}
     />
 
-    <BentoCard className="col-span-1 items-center justify-center text-center">
-      <div className="flex gap-1 rounded-lg border bg-muted p-1">
-        <span className="rounded-md px-3 py-1 text-sm">Light</span>
-        <span className="rounded-md bg-primary px-3 py-1 text-sm text-primary-foreground">
-          Dark
-        </span>
+    <div className="relative mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end sm:gap-8">
+      <div>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          What you get
+        </p>
+        <h2
+          className="max-w-160 text-[clamp(38px,5vw,64px)] font-bold leading-[0.96] tracking-[-0.045em]"
+          id="home-bento-title"
+        >
+          The whole control set.
+        </h2>
       </div>
-      <div className="mt-3 text-sm text-muted-foreground">
-        Both appearances, one token set
-      </div>
-    </BentoCard>
+      <Link
+        className="shrink-0 pb-1 text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        href={ROUTES.DOCS_COMPONENTS}
+        transitionTypes={["nav-forward"]}
+      >
+        Explore all components →
+      </Link>
+    </div>
 
-    <BentoCard className="col-span-1 row-span-2 flex flex-col items-center justify-center overflow-hidden p-6 text-center md:col-span-2 lg:col-span-1">
-      <div className="text-xl font-bold">Liquid Glass with real refraction</div>
-      <div className="mt-4 w-full overflow-hidden">
-        <BentoIframe slug="slider/Basic" className="h-12" />
-      </div>
-      <div className="mt-3 text-sm text-muted-foreground">
-        Refraction in Chromium, material fallback elsewhere
-      </div>
-    </BentoCard>
+    <div className="relative grid auto-rows-[140px] grid-flow-dense grid-cols-2 gap-2.5 md:grid-cols-6 lg:grid-cols-12">
+      <ControlTile component="switch" label="Switch" span={2} />
 
-    {/* Row 2 */}
-    <BentoCard className="col-span-1 items-center justify-center text-center">
-      <div className="text-sm text-muted-foreground">System accents</div>
-      <div className="mt-3 flex gap-1.5">
-        {[
-          "bg-blue-500",
-          "bg-purple-500",
-          "bg-pink-500",
-          "bg-red-500",
-          "bg-orange-500",
-          "bg-yellow-500",
-          "bg-green-500",
-          "bg-gray-400",
-        ].map((color) => (
-          <div key={color} className={cn("h-6 w-6 rounded-full", color)} />
-        ))}
-      </div>
-    </BentoCard>
+      <Tile span={2}>
+        <TileTop>Ships with</TileTop>
+        <TileFigure>19</TileFigure>
+        <TileLabel>Components</TileLabel>
+      </Tile>
 
-    {/* Center: Settings panel with real demos */}
-    <BentoCard className="col-span-2 row-span-2 overflow-hidden p-0">
-      <div className="flex items-center gap-2 border-b px-4 py-3">
-        <div className="flex gap-1.5">
-          <div className="h-3 w-3 rounded-full bg-red-500" />
-          <div className="h-3 w-3 rounded-full bg-yellow-500" />
-          <div className="h-3 w-3 rounded-full bg-green-500" />
+      <Tile span={2}>
+        <TileTop>Every control in</TileTop>
+        <TileFigure>5</TileFigure>
+        <TileLabel>Sizes, mini to extraLarge</TileLabel>
+      </Tile>
+
+      <AppearanceTile />
+
+      <Tile className="gap-0 p-0" rows={2} span={3}>
+        <div className="px-5.5 pt-6 pb-4">
+          <strong className="block text-[clamp(17px,1.5vw,21px)] font-semibold leading-[1.15] tracking-[-0.03em]">
+            Liquid Glass panels, tuned for GPUI
+          </strong>
+          <TileLabel className="mt-2">Regular and Clear materials</TileLabel>
         </div>
-        <div className="flex-1 text-center text-sm font-medium">Settings</div>
-      </div>
-      <div className="flex-1">
-        <BentoIframe slug="box/Basic" className="h-full min-h-[280px]" />
-      </div>
-    </BentoCard>
+        <div className={cn("min-h-0 flex-1 border-t", OS_SEPARATOR)}>
+          <TileDemo component="glass-panel" title="Glass panel demo" />
+        </div>
+      </Tile>
 
-    <BentoCard className="col-span-1 overflow-hidden p-0">
-      <BentoIframe slug="progress/Basic" />
-    </BentoCard>
+      <Tile className="gap-3.5" span={3}>
+        <TileTop>System accents</TileTop>
+        <div className="flex justify-center gap-2.5">
+          {ACCENTS.map((accent) => (
+            <span
+              aria-label={accent.name}
+              className="size-6 rounded-full border-[0.5px] border-black/15"
+              key={accent.name}
+              style={{ backgroundColor: accent.color }}
+              title={accent.name}
+            />
+          ))}
+        </div>
+      </Tile>
 
-    {/* Row 3 */}
-    <BentoCard className="col-span-1 overflow-hidden p-0">
-      <BentoIframe slug="search-field/Basic" />
-    </BentoCard>
+      {/* Centrepiece: a macOS window cropped by the tile, the way a keynote
+          slide crops the thing it is showing off. */}
+      <Tile
+        className="justify-start border-transparent p-0"
+        rows={2}
+        span={6}
+        style={STAGE_BACKGROUND}
+      >
+        {/* Pushed down so the tile crops the pane mid-group rather than ending
+            flush with the tile edge, which reads as an accident. */}
+        <div className="mx-auto mt-14 w-[min(94%,520px)] overflow-hidden rounded-t-[10px] border border-b-0 border-black/20 shadow-[0_2px_4px_rgb(0_0_0/0.28),0_26px_52px_rgb(0_0_0/0.44)]">
+          <div
+            className={cn(
+              "relative flex h-10 items-center border-b px-4",
+              OS_SURFACE,
+              OS_SEPARATOR
+            )}
+          >
+            <div className="flex gap-2">
+              <span className="size-3 rounded-full border-[0.5px] border-black/15 bg-[#ff5f57]" />
+              <span className="size-3 rounded-full border-[0.5px] border-black/15 bg-[#febc2e]" />
+              <span className="size-3 rounded-full border-[0.5px] border-black/15 bg-[#28c840]" />
+            </div>
+            <span
+              className={cn(
+                "-translate-x-1/2 absolute left-1/2 text-[13px] font-semibold",
+                OS_LABEL_SECONDARY
+              )}
+            >
+              Settings
+            </span>
+          </div>
+          <TileDemo
+            className="h-55"
+            component="box"
+            title="Settings pane demo"
+          />
+        </div>
+      </Tile>
 
-    <BentoCard className="col-span-1 overflow-hidden p-0">
-      <BentoIframe slug="stepper/Basic" />
-    </BentoCard>
+      <ControlTile component="search-field" label="Search Field" span={3} />
 
-    {/* Measured against AppKit */}
-    <BentoCard className="col-span-2 items-center justify-center p-6 text-center md:col-span-1">
-      <div className="text-lg font-bold text-primary">
-        Measured against AppKit, not guessed
-      </div>
-    </BentoCard>
+      <ControlTile component="stepper" label="Stepper" span={3} />
 
-    {/* Bottom row */}
-    <StatCard
-      label="Built for"
-      value="GPUI"
-      description="Rust-native rendering"
-    />
+      <Tile className="justify-center" span={4}>
+        <strong
+          className={cn(
+            "text-[clamp(19px,1.9vw,27px)] font-bold leading-[1.15] tracking-[-0.03em]",
+            ACCENT_TEXT
+          )}
+        >
+          Measured against AppKit,
+          <br />
+          not guessed
+        </strong>
+      </Tile>
 
-    <StatCard
-      label="Whole library"
-      value="0 KB"
-      description="Zero JS runtime required"
-    />
+      <Tile span={4}>
+        <TileTop>Built for</TileTop>
+        <TileFigure small>GPUI</TileFigure>
+        <TileLabel>Rust-native rendering</TileLabel>
+      </Tile>
 
-    <BentoCard className="col-span-1 items-center justify-center p-6 text-center">
-      <div className="text-sm text-muted-foreground">Released under</div>
-      <div className="mt-1 text-5xl font-bold tracking-tight">MIT</div>
-      <div className="mt-1 text-sm text-muted-foreground">Use it anywhere</div>
-    </BentoCard>
-  </div>
+      <Tile span={2}>
+        <TileTop>Written in</TileTop>
+        <TileFigure small>Rust</TileFigure>
+        <TileLabel>No JS runtime</TileLabel>
+      </Tile>
+
+      <Tile span={2}>
+        <TileTop>Released under</TileTop>
+        <TileFigure small>MIT</TileFigure>
+        <TileLabel>Use it anywhere</TileLabel>
+      </Tile>
+    </div>
+  </section>
 );
