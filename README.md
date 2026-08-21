@@ -1,165 +1,63 @@
 <p align="center">
-  <img src="https://maccn.vercel.app/og" alt="maccn banner" />
+  <img src="./.github/assets/gh.png" alt="maccn banner" />
 </p>
 
 <h1 align="center">maccn</h1>
 
 <p align="center">
-  macOS-inspired UI components for Rust applications.
+  macOS-inspired UI components for <a href="https://github.com/zed-industries/zed/tree/main/crates/gpui">GPUI</a>.<br/>
+  Zero config. One command setup. Follows the same layering as <a href="https://ui.shadcn.com">shadcn/ui</a>.
 </p>
 
-## What's inside
+<p align="center">
+  <a href="https://github.com/shadcn-labs/maccn"><img src="https://www.shieldcn.dev/github/stars/shadcn-labs/maccn.svg?variant=secondary&size=xs&theme=zinc" alt="GitHub Stars" /></a>
+  <a href="https://github.com/shadcn-labs/maccn/actions"><img src="https://www.shieldcn.dev/github/ci/shadcn-labs/maccn.svg?variant=secondary&size=xs&theme=zinc" alt="CI" /></a>
+  <a href="https://x.com/shadcnlabs"><img src="https://www.shieldcn.dev/x/follow/shadcnlabs.svg?variant=branded&size=xs&theme=zinc" alt="X Follow" /></a>
+</p>
 
-- 🍎 **19 components** — Badge, Box, Button, Checkbox, Glass Panel, Help Button, Label, Pop-Up Button, Progress, Radio Group, Search Field, Secure Field, Segmented Control, Separator, Slider, Spinner, Stepper, Switch, and Text Field
+<p align="center">
+  <a href="https://maccn.vercel.app/docs">Get Started</a> ·
+  <a href="https://maccn.vercel.app/docs/installation">Installation</a> ·
+  <a href="https://maccn.vercel.app/docs/components">Components</a> ·
+</p>
+
+## Features
+
+- 🍎 **19 components** — Badge, Box, Button, Checkbox, Glass Panel, Help Button, and more, with polished interactions and productive defaults.
 - 📏 **Five control sizes** — `mini`, `small`, `regular`, `large`, and `extraLarge` on every control that has them
 - 🌗 **Light and dark** — driven by a single theme on any element
 - 🎨 **System accents** — every control follows one accent color
 
-## Repository layout
+## Community
 
-This is a pnpm + Cargo monorepo:
+The maccn community lives on [GitHub](https://github.com/shadcn-labs/maccn), where you can ask questions, share ideas, and show what you've built.
 
-```
-├── crates/
-│   └── maccn/                  # the component library (Rust)
-│       ├── examples/showcase.rs# native demo
-│       └── examples/wasm/      # browser demo (built into docs/public/examples)
-├── docs/                       # Next.js documentation site (Fumadocs)
-├── Cargo.toml                  # Rust workspace
-├── package.json                # pnpm workspace root
-└── pnpm-workspace.yaml
-```
+## Contributing
 
-## Getting started
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) to get the repo running locally and land a change, and use [issues](https://github.com/shadcn-labs/maccn/issues) and [discussions](https://github.com/shadcn-labs/maccn/discussions) to collaborate. By participating, you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
-Run the native component demo:
+## Security
 
-```bash
-cargo run -p maccn --example showcase                # open the overview
-cargo run -p maccn --example showcase -- switch      # open one component
-```
-
-Run the docs site:
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Build the browser demos into the docs site (required for the live examples on each component page):
-
-```bash
-make -C crates/maccn/examples/wasm install   # once: wasm target + wasm-bindgen + deps
-make -C crates/maccn/examples/wasm build     # outputs to docs/public/examples
-```
-
-## Deploying the docs site
-
-Deploy the entire Next.js app like any other Next.js project — no special
-build step is required. The browser demos are plain static assets under
-`docs/public/examples`, so they deploy alongside the site automatically.
-
-### 1. Build
-
-```bash
-pnpm install
-pnpm build
-```
-
-### 2. Serve
-
-Run the production server on the platform of your choice:
-
-```bash
-pnpm start        # runs `next start` (defaults to 0.0.0.0:3000)
-```
-
-`next start` reads `PORT` and `HOSTNAME` from the environment:
-
-```bash
-PORT=8080 HOSTNAME=0.0.0.0 SITE_URL=https://components.example.com pnpm start
-```
-
-### 3. Reverse proxy (optional)
-
-Put Nginx or Caddy in front of it for TLS and a public hostname:
-
-```nginx
-# /etc/nginx/sites-available/maccn
-server {
-  listen 443 ssl;
-  server_name components.example.com;
-
-  location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  }
-}
-```
-
-Or, with Caddy:
-
-```caddy
-components.example.com {
-  reverse_proxy 127.0.0.1:3000
-}
-```
-
-### 4. Keep it running
-
-Use a process manager so the server restarts and starts on boot:
-
-```bash
-# pm2
-pm2 start "pnpm start" --name maccn-docs
-pm2 save && pm2 startup
-
-# or systemd
-# /etc/systemd/system/maccn-docs.service
-#   WorkingDirectory=/srv/maccn
-#   ExecStart=/usr/bin/pnpm start
-```
-
-### Docker
-
-```dockerfile
-FROM node:22-alpine AS deps
-WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY docs/package.json docs/
-RUN corepack enable && pnpm install --frozen-lockfile
-
-FROM node:22-alpine AS build
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN pnpm build
-
-FROM node:22-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=build /app .
-RUN corepack enable
-EXPOSE 3000
-ENV PORT=3000 HOSTNAME=0.0.0.0
-CMD ["pnpm", "start"]
-```
-
-## Scripts
-
-- `pnpm dev` — run the docs site
-- `pnpm build` / `pnpm start` — build and serve the docs site
-- `pnpm typecheck` — typecheck the docs site
-- `pnpm check` / `pnpm fix` — lint and format the whole repo (ultracite)
-- `pnpm wasm:build` — build the browser demos into `docs/public/examples`
+Please do not open public issues for security vulnerabilities. Follow [SECURITY.md](./SECURITY.md) and report them privately through GitHub Security Advisories.
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](LICENSE)
 
 macOS and AppKit are trademarks of Apple Inc. This project is not affiliated with, endorsed by, or sponsored by Apple.
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=shadcn-labs/maccn)](https://github.com/shadcn-labs/maccn/graphs/contributors)
+
+> Made with [contrib.rocks](https://contrib.rocks)
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=shadcn-labs%2Fmaccn&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=shadcn-labs/maccn&type=date&theme=dark&legend=top-left&sealed_token=5krMkSaolIDM67oRAmloIrx5HOzAGlSFaPD7JZnJWUg_9b7no_HQcxxgVgVSNzw-C3UnmZVe5DPanlpiJ7mbHcyxm_FhvGbmPUnW0VB9VrVu-NcvYkKpd9j_fMx96WdkP7KTiql0PVh8E7l9Uid30pAKI9PFOCFOvUn9YsI7LMoH7JbcrsjctRV9friH" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=shadcn-labs/maccn&type=date&legend=top-left&sealed_token=5krMkSaolIDM67oRAmloIrx5HOzAGlSFaPD7JZnJWUg_9b7no_HQcxxgVgVSNzw-C3UnmZVe5DPanlpiJ7mbHcyxm_FhvGbmPUnW0VB9VrVu-NcvYkKpd9j_fMx96WdkP7KTiql0PVh8E7l9Uid30pAKI9PFOCFOvUn9YsI7LMoH7JbcrsjctRV9friH" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=shadcn-labs/maccn&type=date&legend=top-left&sealed_token=5krMkSaolIDM67oRAmloIrx5HOzAGlSFaPD7JZnJWUg_9b7no_HQcxxgVgVSNzw-C3UnmZVe5DPanlpiJ7mbHcyxm_FhvGbmPUnW0VB9VrVu-NcvYkKpd9j_fMx96WdkP7KTiql0PVh8E7l9Uid30pAKI9PFOCFOvUn9YsI7LMoH7JbcrsjctRV9friH" />
+ </picture>
+</a>

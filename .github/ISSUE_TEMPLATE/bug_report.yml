@@ -1,0 +1,87 @@
+name: Bug report
+description: Report a reproducible bug in maccn.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Before opening a new issue:
+
+        - [Search existing issues](https://github.com/shadcn-labs/maccn/issues) and upvote instead of duplicating — it gets bugs fixed faster.
+        - Verify the bug still reproduces on the **latest** maccn release; it may already be fixed.
+        - For questions or help with your own project, use [Discussions](https://github.com/shadcn-labs/maccn/discussions) instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: A clear description of the bug.
+      placeholder: "When I do X, Y happens instead of Z."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: A step-by-step description of how to trigger the bug.
+      placeholder: |
+        1. Run `cargo run -p maccn --example showcase`
+        2. Click on the Switch component
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Current vs. expected behavior
+      description: What happens today (including exact error output), and what you expected to happen instead.
+      placeholder: "Following the steps above, I expected A, but observed B instead."
+    validations:
+      required: true
+  - type: input
+    id: maccn-version
+    attributes:
+      label: maccn version
+      description: The exact version or commit hash you are using.
+      placeholder: "main @ abc1234"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Your OS, Rust version (`rustc --version`), and cargo version.
+      render: shell
+      placeholder: |
+        OS: macOS 15.5 (arm64)
+        Rust: 1.95.0
+        cargo: 1.95.0
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Target
+      multiple: false
+      options:
+        - Native (macOS)
+        - WebAssembly (browser)
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Build and runtime logs
+      description: |
+        Paste the relevant build output and runtime logs around the failure.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help — screenshots, the first version where you noticed the regression, etc.
+    validations:
+      required: false

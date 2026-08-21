@@ -8,10 +8,7 @@
     "start": "pnpm --filter @maccn/docs start",
     "typecheck": "pnpm --filter @maccn/docs typecheck",
     "check": "ultracite check",
-    "fix": "ultracite fix",
-    "wasm:build": "make -C crates/maccn/examples/wasm build",
-    "wasm:dev": "make -C crates/maccn/examples/wasm dev",
-    "wasm:clean": "make -C crates/maccn/examples/wasm clean"
+    "fix": "ultracite fix"
   },
   "devDependencies": {
     "lefthook": "^2.1.6",
