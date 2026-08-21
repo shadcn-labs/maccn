@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "make -C ../crates/maccn/examples/wasm build && next build",
+    "build": "rustup target add wasm32-unknown-unknown && cargo install -f wasm-bindgen-cli --version 0.2.121 && make -C ../crates/maccn/examples/wasm build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "wasm:build": "make -C ../crates/maccn/examples/wasm build",
