@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "rustup target add wasm32-unknown-unknown --toolchain nightly && cargo install -f wasm-bindgen-cli --version 0.2.121 && pnpm wasm:build && next build",
+    "dev": "pnpm wasm:build && next dev",
+    "build": "pnpm wasm:build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "wasm:build": "make -C ../crates/maccn/examples/wasm build",

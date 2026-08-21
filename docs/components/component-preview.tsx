@@ -45,6 +45,7 @@ export const ComponentPreview = ({
         src={`/examples?component=${encodeURIComponent(slug)}`}
         title={`${slug} interactive example`}
         allow="cross-origin-isolated"
+        tabIndex={-1}
       />
       {children && <div className="mv-preview-code">{children}</div>}
     </div>

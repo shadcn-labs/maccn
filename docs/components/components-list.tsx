@@ -33,6 +33,7 @@ const ComponentCard = ({ component }: { component: PageTreePage }) => {
           title={`${name} preview`}
           className="h-full w-full border-none"
           allow="cross-origin-isolated"
+          tabIndex={-1}
         />
       </div>
       <div className="p-2 pb-1 text-base font-medium underline-offset-4 group-hover:underline">
