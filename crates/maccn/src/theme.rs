@@ -157,7 +157,7 @@ impl MaccnTheme {
             label_on_accent: c(0xFFFFFFFF),
             label_on_accent_disabled: c(0xFFFFFFFF),
 
-            window_bg: c(0xF6F6F6FF),
+            window_bg: c(0xFFFFFFFF),
             control_bg: c(0xFFFFFFFF),
             control_bg_disabled: c(0xFFFFFF80),
             content_bg: c(0xFFFFFFFF),
@@ -218,7 +218,7 @@ impl MaccnTheme {
             label_on_accent: c(0xFFFFFFFF),
             label_on_accent_disabled: c(0xFFFFFF80),
 
-            window_bg: c(0x1E1E1EFF),
+            window_bg: c(0x242424FF),
             control_bg: c(0x1E1E1EFF),
             control_bg_disabled: c(0x1E1E1E80),
             content_bg: c(0x272727FF),

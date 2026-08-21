@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>maccn example</title>
+  <title>maccn card preview</title>
   <style>
     * { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; margin: 0; }
@@ -16,11 +16,11 @@
       body { background: #242424; }
     }
     body > canvas { position: fixed; inset: 0; display: block; width: 100%; height: 100%; border: 0; }
-    #loading { position: fixed; inset: 0; display: grid; place-items: center; color: #737373; pointer-events: none; }
+    #loading { position: fixed; inset: 0; display: grid; place-items: center; color: #737373; pointer-events: none; font-size: 12px; }
   </style>
 </head>
 <body>
-  <div id="loading">Loading the gallery…</div>
-  <script type="module" src="/examples/main.js"></script>
+  <div id="loading">Loading…</div>
+  <script type="module" src="/examples/card.js"></script>
 </body>
 </html>

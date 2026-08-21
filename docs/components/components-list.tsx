@@ -22,12 +22,8 @@ const ComponentCard = ({ component }: { component: PageTreePage }) => {
   const title = String(component.name);
 
   return (
-    <Link
-      className="group rounded-lg bg-code p-1 transition-colors hover:bg-muted/80"
-      href={component.url}
-      key={component.$id ?? component.url}
-    >
-      <div className="flex h-[140px] items-center justify-center overflow-hidden rounded-md border bg-muted/50">
+    <div className="rounded-lg bg-code p-1 transition-colors hover:bg-muted/80">
+      <div className="flex h-35 items-center justify-center overflow-hidden rounded-md border bg-muted/50">
         <iframe
           src={`/examples?component=${encodeURIComponent(name)}&mode=card`}
           title={`${name} preview`}
@@ -36,10 +32,13 @@ const ComponentCard = ({ component }: { component: PageTreePage }) => {
           tabIndex={-1}
         />
       </div>
-      <div className="p-2 pb-1 text-base font-medium underline-offset-4 group-hover:underline">
+      <Link
+        href={component.url}
+        className="p-2 pb-1 text-base font-medium underline-offset-4 block hover:underline"
+      >
         {title}
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
